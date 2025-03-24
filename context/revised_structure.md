@@ -4,6 +4,7 @@
 - **Vision and Mission**: The evolution toward compute-driven governance and ChaosChain's role in it
 - **The Compute Governance Thesis**: How governance is becoming a computational arms race - reasoning about best decisions likely comes from the most efficiently strucutured AI systems. Media and influence can be bought with large enough eclipse attacks on individuals with power (deep fakes, echo-chamber control, mass campaigns). 
 - **Why This Matters**: The implications for blockchain, crypto, and all systems of human coordination. Security of chains still and will always rely on the social layer, it is not enough to have a good algorithm those using the system must trust that it works as advertised - this is maleable. Blockchains are isomorphic to general governance.
+- **Self adapting blockchains**: See self-evolving-chain.md.
 
 ## 2. The Governance Revolution
 - **The Problems with Current Governance**
