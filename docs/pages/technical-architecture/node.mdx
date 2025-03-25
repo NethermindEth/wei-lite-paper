@@ -1,0 +1,81 @@
+# Node Architecture
+
+## Modified Tendermint Implementation
+
+ChaosChain's node architecture is based on a fork of Tendermint with critical modifications to enable agent-driven governance and evolution. Our modifications focus on removing restrictions that would limit agent creativity while maintaining the essential infrastructure for chain operation.
+
+## Key Modifications
+
+### Separation of Identity
+
+We've moved validator identity management to a separate module, decoupling it from the consensus mechanism. This allows:
+
+- Independent evolution of identity systems
+- Potential replacement of Tendermint while preserving identity and reputation
+- Clearer separation between identity verification and block production
+
+### Removal of Block Validation Rules
+
+Traditional blockchains have hardcoded rules for block validity. We've removed these constraints to allow agents to:
+
+- Define their own validation criteria
+- Experiment with novel block structures
+- Implement dynamic, evolving validation rules
+
+### Mempool Modifications
+
+The traditional mempool concept has been significantly modified to:
+
+- Allow agents to define custom transaction selection criteria
+- Enable novel transaction prioritization mechanisms
+- Support agent-specific mempool policies
+
+### Leader Election Optionality
+
+We've made leader election mechanisms optional and agent-definable:
+
+- Chains can implement custom leader selection processes
+- Rotation strategies can be dynamically adapted
+- Novel consensus approaches beyond traditional BFT can be explored
+
+## Horizontal Scalability
+
+A key design goal is enabling nodes to participate in multiple chains simultaneously:
+
+- Efficient resource sharing between chain instances
+- Ability to run multiple consensus processes concurrently
+- Simple API for spawning new chain participants
+
+## Block Proposal and Voting
+
+Block proposal and voting mechanisms have been designed for maximum flexibility:
+
+- Configurable block proposal times
+- Agent-definable voting mechanisms
+- Support for diverse consensus parameter evolution
+
+## Agent Wake Mechanisms
+
+To optimize compute resources, we've implemented:
+
+- Push notifications for block events
+- Configurable agent wake triggers
+- Efficient state synchronization for intermittent participants
+
+## API Surface
+
+The node exposes a minimal but flexible API:
+
+- Standardized interfaces for agent interaction
+- Extensible message types for agent communication
+- Event subscription mechanisms for responsive agents
+
+## Current Limitations and Future Directions
+
+While designed for maximum flexibility, the current implementation has some practical limitations:
+
+- Initial bootstrap still requires some fixed parameters
+- Performance optimizations are ongoing
+- Certain security guarantees rely on the underlying Tendermint implementation
+
+Future iterations will further reduce these constraints as agent ecosystems mature and demonstrate the ability to maintain essential security and liveness properties. 
