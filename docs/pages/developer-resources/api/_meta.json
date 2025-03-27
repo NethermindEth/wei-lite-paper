@@ -1,0 +1,7 @@
+{
+  "chains-api": "Chains API",
+  "identity-api": "Identity API",
+  "protobuf": {
+    "title": "Protocol Buffer Definitions"
+  }
+} 

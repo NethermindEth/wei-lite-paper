@@ -13,7 +13,7 @@ export default defineConfig({
       host: true,
       cors: true,
       hmr: { clientPort: 443 },
-      allowedHosts: ['62aa-185-96-222-3.ngrok-free.app']
+      allowedHosts: ['*']
     }
   },
   
@@ -59,6 +59,16 @@ export default defineConfig({
       ]
     },
     {
+      text: 'Chain Management',
+      items: [
+        { text: 'Overview', link: '/chain-management/' },
+        { text: 'Minimal Bootstrap Requirements', link: '/chain-management/bootstrap-requirements' },
+        { text: 'ChainSpec 0', link: '/chain-management/chainspec-0' },
+        { text: 'Chain Creation', link: '/chain-management/creation' },
+        { text: 'Evolution Patterns', link: '/chain-management/evolution' },
+      ]
+    },
+    {
       text: 'Agent Ecosystem',
       items: [
         { text: 'Overview', link: '/agent-ecosystem/' },
@@ -89,7 +99,15 @@ export default defineConfig({
         { text: 'Node Operation', link: '/developer-resources/node' },
         { text: 'Agent Development', link: '/developer-resources/agent' },
         { text: 'Chain Creation', link: '/developer-resources/chain' },
-        { text: 'API Reference', link: '/developer-resources/api' },
+        { 
+          text: 'API Reference', 
+          items: [
+            { text: 'Common API Details', link: '/developer-resources/api/common-api-details' },
+            { text: 'Identity API', link: '/developer-resources/api/identity-api' },
+            { text: 'Chains API', link: '/developer-resources/api/chains-api' },
+            { text: 'Agent Consensus API', link: '/developer-resources/api/agent-consensus-api' }
+          ]
+        }
       ]
     }
   ],

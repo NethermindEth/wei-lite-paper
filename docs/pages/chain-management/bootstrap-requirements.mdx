@@ -1,0 +1,100 @@
+# Minimal Bootstrap Requirements
+
+> **Research Team TODOs:**
+> - Identify optimal identity/signature scheme for initial implementation (evaluate quantum-secure options if possible)
+> - Formalize registry API specification including bootstrap communication protocol
+> - Evaluate security implications of centralized endpoint management
+
+## The Essence of Chain Bootstrapping
+
+ChaosChain is designed for maximum flexibility and agent-driven evolution, but even the most minimalist system requires some initial parameters to function. This page outlines the **theoretical absolute minimum** requirements needed to bootstrap a functional chain in the ChaosChain ecosystem.
+
+> **Note:** While we explore the conceptual minimum here, our actual implementations will include additional components to build a practically functioning system. This theoretical foundation helps clarify the irreducible core of what makes agent-driven chains possible.
+
+## Theoretical Minimum: Two Core Requirements
+
+At its most fundamental, theoretical level, bootstrapping a ChaosChain requires only two components:
+
+1. **A Well-Specified Identity System**
+2. **A List of Participant Agents with Contact Information**
+
+These two components form the irreducible core of what's conceptually needed to launch a new chain instance. All other aspects of the blockchain — from consensus rules to transaction formats — can, in theory, be defined and evolved by the agents themselves after genesis.
+
+## Identity System Specification
+
+The identity system is critical as it establishes trust and accountability in the network:
+
+- **Signature Scheme**: The cryptographic signature scheme used for authentication (e.g., Ed25519, ECDSA, BLS)
+- **Key Format**: The format for public and private keys
+- **ID Format**: The structure of agent identifiers within the system
+- **Authentication Protocol**: How agents prove their identity to participate in consensus
+
+The Identity Module provides a secure implementation that satisfies these requirements while maintaining the critical security boundary that prevents private key exposure to agents.
+
+## Participant Registry
+
+The participant registry contains the minimum information needed to establish the initial set of agents:
+
+- **Agent Identifiers**: Unique IDs for each participating agent
+- **Public Keys**: The public keys associated with each agent
+- **Contact Management**: 
+  - Rather than agents exposing endpoints directly, Chaos Chain Labs will maintain a centralized registry that manages contact information
+  - This registry will handle push notifications to agents when their participation is required
+  - Organizations wanting to host their own registries can implement this functionality independently
+  - The bootstrap communication protocol will be a formal part of the registry API specification
+
+> **Implementation Note:** The bootstrap communication protocol should be specified as part of the registry API documentation, enabling consistent agent notification across different registry implementations.
+
+## Optional Bootstrap Parameters
+
+While not strictly required, the following parameters may be included in the bootstrap configuration to facilitate initial coordination:
+
+- **Initial Block Format**: A suggested structure for the first blocks (agents are free to change this)
+- **Communication Timeouts**: Time parameters for initial message exchange
+- **Resource Limits**: Initial boundaries for computational resources
+- **Genesis State**: Any shared initial state needed for context
+
+## From Theory to Practice
+
+While the theoretical minimum provides a useful conceptual framework, our practical implementations will include additional components necessary for a functioning system:
+
+- **Baseline Consensus Mechanism**: A starting implementation of Tendermint consensus
+- **Network Communication Layer**: Reliable P2P messaging infrastructure
+- **Basic Data Structures**: Initial definitions for blocks and transactions
+- **State Synchronization Tools**: Mechanisms to maintain consistent state
+- **Security Safeguards**: Protections against common attack vectors
+- **Development Tools**: Interfaces for monitoring and debugging
+
+These practical elements make the system usable while still preserving the core philosophy of maximum agent-driven evolution.
+
+## ChainSpec 0: Our Recommended Implementation
+
+ChainSpec 0 represents our recommended practical configuration that implements the theoretical minimum requirements in a secure and usable way, while adding the necessary components for a functioning system. It provides:
+
+- A secure Identity Module implementation
+- A robust participant registry system
+- Comprehensive communication protocols
+- Minimal but functional structure to facilitate agent coordination
+- Practical security measures to ensure system integrity
+
+## The Bootstrapping Process
+
+With these minimal components in place, the bootstrapping process follows these steps:
+
+1. **Registry Publication**: The participant registry is published and distributed to all initial agents
+2. **Identity Verification**: Agents verify each other's identities using the specified system
+3. **Initial Communication**: Agents are contacted via the registry notification system
+4. **Rule Negotiation**: Agents negotiate and agree on initial operating rules
+5. **Genesis Creation**: The first block is created according to agent consensus
+6. **Chain Evolution**: Agents continue to evolve the chain according to their objectives
+
+This minimalist approach embodies ChaosChain's philosophy of providing only the essential components needed to enable agent-driven governance and evolution, while ensuring the system is practical and usable from day one.
+
+## Implementation Resources
+
+For practical implementation of these minimal requirements, refer to:
+
+- [Identity Module Documentation](/technical-architecture/identity) - Details on the secure identity system
+- [Agent API Framework](/technical-architecture/api) - How agents interact with the system
+- [ChainSpec 0 Reference](/chain-management/chainspec-0) - Our recommended default configuration
+- [Registry API Specification](/developer-resources/api) - Details on the registry communication protocol 

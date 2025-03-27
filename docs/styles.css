@@ -1,0 +1,13 @@
+/* Custom styling for Mermaid diagrams */
+.mermaid {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+
+/* Ensure SVG content is visible and properly sized */
+.mermaid svg {
+  width: 100%;
+  height: auto;
+  display: block;
+} 

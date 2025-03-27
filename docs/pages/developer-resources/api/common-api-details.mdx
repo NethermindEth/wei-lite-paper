@@ -1,0 +1,85 @@
+# Common API Details
+
+This page documents the common details shared across all ChaosChain REST APIs, including connection details, authentication, and response formats.
+
+## Connection Details
+
+All ChaosChain APIs are served over HTTPS on port 8443 by default. Each API has its own base path prefix:
+
+```
+https://localhost:8443/api/v1/[api-name]
+```
+
+Configuration options:
+
+```bash
+# Default port
+8443
+
+# Override with environment variable
+export CHAOSCHAIN_API_PORT=9000
+
+# Default bind address
+127.0.0.1
+
+# Override with environment variable
+export CHAOSCHAIN_API_BIND=0.0.0.0
+```
+
+## Authentication
+
+ChaosChain APIs use API keys for authentication. API keys are provided in the `X-API-Key` header:
+
+```
+X-API-Key: YOUR_API_KEY
+```
+
+API keys can be generated and managed through the administrative interface. Each client should use its own API key, which can be rotated or revoked as needed.
+
+## Common Response Format
+
+All API responses follow a standard format:
+
+```json
+{
+  "success": true,
+  "data": { /* response data */ },
+  "error": null,
+  "requestId": "req-123456789"
+}
+```
+
+On error:
+
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": { /* optional additional error details */ }
+  },
+  "requestId": "req-123456789"
+}
+```
+
+## HTTP Status Codes
+
+The APIs use standard HTTP status codes to indicate the result of a request:
+
+| Status Code | Description |
+|-------------|-------------|
+| 200 OK | Request was successful |
+| 201 Created | Resource was successfully created |
+| 400 Bad Request | The request was malformed or contained invalid parameters |
+| 401 Unauthorized | Authentication failed or token is missing |
+| 403 Forbidden | The client does not have permission to access the requested resource |
+| 404 Not Found | The requested resource was not found |
+| 409 Conflict | The request conflicts with the current state of the server |
+| 429 Too Many Requests | The client has sent too many requests in a given time period |
+| 500 Internal Server Error | An error occurred on the server |
+
+## Content Types
+
+All requests and responses use JSON format with the `application/json` content type. Binary data (like cryptographic keys and hashes) is represented as hex strings with the `0x` prefix or as base64-encoded strings, depending on the specific API endpoint. 

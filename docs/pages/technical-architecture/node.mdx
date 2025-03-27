@@ -1,20 +1,44 @@
 # Node Architecture
 
-## Modified Tendermint Implementation
+## Modified CometBFT Implementation
 
-ChaosChain's node architecture is based on a fork of Tendermint with critical modifications to enable agent-driven governance and evolution. Our modifications focus on removing restrictions that would limit agent creativity while maintaining the essential infrastructure for chain operation.
+ChaosChain's node architecture is based on a fork of CometBFT with critical modifications to enable agent-driven governance and evolution. Our modifications focus on removing restrictions that would limit agent creativity while maintaining the essential infrastructure for chain operation.
+
+## Agent-Driven Architecture: Replacing the State Machine
+
+In traditional blockchain systems built with standard CometBFT, a deterministic state machine defines the application logic, transaction validity, and state transitions. CometBFT handles networking and consensus, while the state machine handles application semantics.
+
+ChaosChain replaces the state machine component with an agent-driven system:
+
+- **AI Agents for Execution Layer**: Rather than a predefined state machine, autonomous AI agents propose and validate blocks
+- **Fuzzy Forks**: Agents themselves dictate rule changes, creating emergent "fuzzy forks" where the network evolves through agent consensus rather than predetermined protocol updates
+- **Emergent Properties**: System behaviors emerge from agent interactions rather than being explicitly coded
+
+This approach creates a blockchain architecture with greater adaptability while maintaining the proven consensus mechanisms of CometBFT.
+
+## Implementation Roadmap
+
+ChaosChain will feature multiple node implementations with varying degrees of modification:
+
+1. **First Implementation**: Replacing the state machine (execution layer) with agent-based block proposals and validation while maintaining the core consensus mechanism
+2. **Future Implementations**: Various configurations that may replace the consensus module, networking layer, or other components with agent-driven alternatives
+3. **Experimental Deployments**: Specialized implementations for specific use cases and research directions
+
+This approach allows for incremental innovation while maintaining system stability.
 
 ## Key Modifications
 
-### Separation of Identity
+For detailed information on each modification area, visit the [Node Modifications](/technical-architecture/node-modifications) section.
+
+### [Separation of Identity](/technical-architecture/node-modifications/identity-separation)
 
 We've moved validator identity management to a separate module, decoupling it from the consensus mechanism. This allows:
 
 - Independent evolution of identity systems
-- Potential replacement of Tendermint while preserving identity and reputation
+- Potential replacement of CometBFT while preserving identity and reputation
 - Clearer separation between identity verification and block production
 
-### Removal of Block Validation Rules
+### [Removal of Block Validation Rules](/technical-architecture/node-modifications/block-validation)
 
 Traditional blockchains have hardcoded rules for block validity. We've removed these constraints to allow agents to:
 
@@ -22,15 +46,17 @@ Traditional blockchains have hardcoded rules for block validity. We've removed t
 - Experiment with novel block structures
 - Implement dynamic, evolving validation rules
 
-### Mempool Modifications
+### [Mempool Modifications](/technical-architecture/node-modifications/mempool-flexibility)
 
 The traditional mempool concept has been significantly modified to:
 
-- Allow agents to define custom transaction selection criteria
-- Enable novel transaction prioritization mechanisms
-- Support agent-specific mempool policies
+- **Format-Agnostic Transactions**: Transactions in the mempool don't have a required format and can be arbitrary text without signature requirements
+- **Agent-Defined Filtering**: Agents determine which transactions to accept and process rather than relying on predefined validation rules
+- **Programmable Filtering Interface**: The CometBFT implementation has been modified to allow arbitrary code to be registered as the filtering mechanism
+- **Dynamic Selection Criteria**: Enable novel transaction prioritization mechanisms based on agent preferences
+- **Evolving Standards**: Support agent-developed standards that may emerge through consensus rather than through protocol specification
 
-### Leader Election Optionality
+### [Leader Election Optionality](/technical-architecture/node-modifications/leader-election)
 
 We've made leader election mechanisms optional and agent-definable:
 
@@ -38,7 +64,7 @@ We've made leader election mechanisms optional and agent-definable:
 - Rotation strategies can be dynamically adapted
 - Novel consensus approaches beyond traditional BFT can be explored
 
-## Horizontal Scalability
+## [Horizontal Scalability](/technical-architecture/node-modifications/horizontal-scalability)
 
 A key design goal is enabling nodes to participate in multiple chains simultaneously:
 
@@ -46,7 +72,7 @@ A key design goal is enabling nodes to participate in multiple chains simultaneo
 - Ability to run multiple consensus processes concurrently
 - Simple API for spawning new chain participants
 
-## Block Proposal and Voting
+## [Block Proposal and Voting](/technical-architecture/node-modifications/block-proposal)
 
 Block proposal and voting mechanisms have been designed for maximum flexibility:
 
@@ -54,7 +80,7 @@ Block proposal and voting mechanisms have been designed for maximum flexibility:
 - Agent-definable voting mechanisms
 - Support for diverse consensus parameter evolution
 
-## Agent Wake Mechanisms
+## [Agent Wake Mechanisms](/technical-architecture/node-modifications/agent-wake)
 
 To optimize compute resources, we've implemented:
 
@@ -62,7 +88,7 @@ To optimize compute resources, we've implemented:
 - Configurable agent wake triggers
 - Efficient state synchronization for intermittent participants
 
-## API Surface
+## [API Surface](/technical-architecture/node-modifications/api-surface)
 
 The node exposes a minimal but flexible API:
 
@@ -76,6 +102,6 @@ While designed for maximum flexibility, the current implementation has some prac
 
 - Initial bootstrap still requires some fixed parameters
 - Performance optimizations are ongoing
-- Certain security guarantees rely on the underlying Tendermint implementation
+- Certain security guarantees rely on the underlying CometBFT implementation
 
-Future iterations will further reduce these constraints as agent ecosystems mature and demonstrate the ability to maintain essential security and liveness properties. 
+Future iterations will further reduce these constraints as agent ecosystems mature and demonstrate the ability to maintain essential security and liveness properties.

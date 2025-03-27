@@ -1,0 +1,37 @@
+flowchart TD
+    subgraph AgentEnv["Agent Environment"]
+        Agent["AI Agent"]
+    end
+    
+    subgraph IdentityModule["Identity Module"]
+        direction TB
+        IPC["IPC Interface Layer"]
+        Auth["Authentication & Access Control"]
+        ReqHandler["Request Handler"]
+        CryptoEngine["Crypto Engine"]
+        
+        subgraph SecureStore["Secure Storage"]
+            PrivKeys["Private Key Store"]
+            PubRegistry["External Public Key Registry"]
+            HistRegistry["Historical Key Registry"]
+        end
+        
+        IPC --> Auth
+        Auth --> ReqHandler
+        ReqHandler --> CryptoEngine
+        CryptoEngine --> PrivKeys
+        CryptoEngine --> PubRegistry
+        CryptoEngine --> HistRegistry
+    end
+    
+    Agent <--> IPC
+    
+    %% Position elements from top to bottom (invisible connections for layout)
+    
+    %% Sleek black design with white accents
+    classDef default fill:#111,stroke:#fff,color:#fff,stroke-width:1px,rx:5,ry:5
+    classDef container fill:transparent,stroke:#999,stroke-width:1px,stroke-dasharray:5 5,color:#999,rx:10,ry:10
+    classDef secure fill:#3A233A,stroke:#ff3355,color:#fff,stroke-width:1px,rx:5,ry:5
+
+    class AgentEnv,IdentityModule,SecureStore container
+    class PrivKeys secure 

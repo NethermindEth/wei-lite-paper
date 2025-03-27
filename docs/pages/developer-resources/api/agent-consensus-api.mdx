@@ -1,0 +1,794 @@
+# Agent Consensus Participation API
+
+## Overview
+
+The Agent Consensus Participation API enables agents to actively participate in the blockchain consensus process. This API is crucial for validators and AI agents to contribute to block proposal, voting, and chain validation in ChaosChain's agent-driven governance model.
+
+This API provides comprehensive endpoints for:
+- Subscribing to consensus events via WebSockets
+- Receiving real-time notifications for block proposals and voting opportunities
+- Proposing new blocks when selected as a block proposer
+- Casting votes on proposed blocks
+- Tracking block status through finalization
+- Securely signing blocks and votes using the Identity Module
+
+## Communication Protocol
+
+The Agent Consensus API uses a combination of:
+- RESTful HTTP endpoints with JSON for configuration and setup
+- WebSocket connections for real-time notifications and events
+- The Identity Module API for secure cryptographic operations
+
+## API Reference
+
+For connection details, authentication, and common response formats, see the [Common API Details](/developer-resources/api/common-api-details) page.
+
+The Agent Consensus API is part of the Chains API and uses the base URL:
+
+```
+https://localhost:8443/api/v1/chains
+```
+
+## Consensus Participation Endpoints
+
+### Agent Subscription
+
+Establishes a subscription for an agent to receive push notifications for a specific chain, such as block proposals and voting opportunities.
+
+**Endpoint:** `POST /api/v1/chains/{chainId}/subscribe`
+
+**Parameters:**
+- `chainId`: Human-readable chain ID or EVM chain ID
+
+**Request:**
+```json
+{
+  "agentId": "agent-xyz-123", // Unique identifier for the agent
+  "notificationTypes": ["PROPOSE_BLOCK", "VOTE_BLOCK", "FINALIZE_BLOCK"], // Types of notifications to receive
+  "callbackUrl": "http://localhost:3000/notifications", // HTTP callback URL for notifications (alternative to WebSocket)
+  "publicKey": "0xdef456..." // Agent's public key for verification
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "subscriptionId": "sub-123456", // Unique subscription identifier
+    "subscriptionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", // Authentication token for WebSocket connection
+    "expiresAt": 1699426123, // Timestamp when subscription expires
+    "wsEndpoint": "ws://localhost:8443/chains/cc-finance-derivatives-mainnet/subscribe" // WebSocket endpoint for real-time notifications
+  },
+  "error": null,
+  "requestId": "req-123456789"
+}
+```
+
+### WebSocket Notification Format
+
+Once subscribed, agents receive notifications via WebSocket. Each notification follows this format:
+
+```json
+{
+  "type": "PROPOSE_BLOCK", // Type of notification (PROPOSE_BLOCK, VOTE_BLOCK, FINALIZE_BLOCK)
+  "chainId": "cc-finance-derivatives-mainnet", // Chain identifier
+  "timestamp": 1667890123, // Timestamp of notification
+  "requestId": "req-987654321", // Unique request identifier
+  "deadline": 1667890128, // Deadline for responding (Unix timestamp)
+  "data": {
+    // Notification-specific data (varies by type)
+  }
+}
+```
+
+#### Block Proposal Notification
+
+When it's an agent's turn to propose a block:
+
+```json
+{
+  "type": "PROPOSE_BLOCK",
+  "chainId": "cc-finance-derivatives-mainnet",
+  "timestamp": 1667890123,
+  "requestId": "req-987654321",
+  "deadline": 1667890128,
+  "data": {
+    "height": 150290, // Block height to propose
+    "parentHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc", // Parent block hash
+    "validatorAddress": "0xabc123..." // Validator address selected for this proposal
+  }
+}
+```
+
+#### Block Voting Notification
+
+When a new block requires validation:
+
+```json
+{
+  "type": "VOTE_BLOCK",
+  "chainId": "cc-finance-derivatives-mainnet",
+  "timestamp": 1667890123,
+  "requestId": "req-987654321",
+  "deadline": 1667890128,
+  "data": {
+    "height": 150290, // Block height to vote on
+    "blockHash": "0x5b32e1c734f553d6151387a9df6afbb953b8fee3f9896d8d33585f28b9d2234c", // Hash of proposed block
+    "proposerAddress": "0x456def...", // Address of the validator who proposed this block
+    "blockUrl": "/api/v1/chains/cc-finance-derivatives-mainnet/blocks/0x5b32e1c734f553d6151387a9df6afbb953b8fee3f9896d8d33585f28b9d2234c" // URL to fetch full block data
+  }
+}
+```
+
+#### Block Finalization Notification
+
+When a block has been finalized:
+
+```json
+{
+  "type": "FINALIZE_BLOCK",
+  "chainId": "cc-finance-derivatives-mainnet",
+  "timestamp": 1667890123,
+  "requestId": "req-987654321",
+  "data": {
+    "height": 150290, // Block height finalized
+    "blockHash": "0x5b32e1c734f553d6151387a9df6afbb953b8fee3f9896d8d33585f28b9d2234c", // Hash of finalized block
+    "validatorsSigned": 4, // Number of validators who signed
+    "totalVotingPower": 100, // Total voting power
+    "signedVotingPower": 80 // Voting power that signed (percentage can be calculated)
+  }
+}
+```
+
+### Block Retrieval
+
+Retrieves block data for validation.
+
+**Endpoint:** `GET /api/v1/chains/{chainId}/blocks/{blockHash}`
+
+**Parameters:**
+- `chainId`: Human-readable chain ID or EVM chain ID
+- `blockHash`: Hash of the block to retrieve
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "header": {
+      "height": 150290,
+      "parentHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
+      "timestamp": 1667890123,
+      "proposer": "0x456def..."
+    },
+    "body": {
+      "data": "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d", // Arbitrary data encoded as hex
+      "dataSize": 1024 // Size in bytes
+    },
+    "signatures": {
+      "0x123abc...": "0xsignature1...",
+      "0x456def...": "0xsignature2..."
+    },
+    "hash": "0x5b32e1c734f553d6151387a9df6afbb953b8fee3f9896d8d33585f28b9d2234c"
+  },
+  "error": null,
+  "requestId": "req-123456789"
+}
+```
+
+### Propose Block
+
+Submits a new block proposal.
+
+**Endpoint:** `POST /api/v1/chains/{chainId}/blocks`
+
+**Parameters:**
+- `chainId`: Human-readable chain ID or EVM chain ID
+
+**Request:**
+```json
+{
+  "requestId": "req-987654321", // The requestId from the PROPOSE_BLOCK notification
+  "block": {
+    "height": 150290,
+    "parentHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
+    "timestamp": 1667890123,
+    "data": "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d" // Arbitrary data encoded as hex
+  },
+  "signature": "0xproposerSignature..." // Signature of the block by the proposer
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "blockHash": "0x5b32e1c734f553d6151387a9df6afbb953b8fee3f9896d8d33585f28b9d2234c",
+    "status": "PROPOSED",
+    "timestamp": 1667890123
+  },
+  "error": null,
+  "requestId": "req-123456789"
+}
+```
+
+### Submit Vote
+
+Submits a vote for a block.
+
+**Endpoint:** `POST /api/v1/chains/{chainId}/blocks/{blockHash}/votes`
+
+**Parameters:**
+- `chainId`: Human-readable chain ID or EVM chain ID
+- `blockHash`: Hash of the block being voted on
+
+**Request:**
+```json
+{
+  "requestId": "req-987654321", // The requestId from the VOTE_BLOCK notification
+  "validatorAddress": "0x123abc...",
+  "vote": "APPROVE", // APPROVE or REJECT
+  "reason": "Valid block", // Optional reason, required for REJECT
+  "signature": "0xvalidatorSignature..." // Signature of the vote
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "accepted": true,
+    "currentApprovals": 2,
+    "requiredApprovals": 3,
+    "timestamp": 1667890123
+  },
+  "error": null,
+  "requestId": "req-123456789"
+}
+```
+
+### Query Block Status
+
+Checks the status of a proposed block.
+
+**Endpoint:** `GET /api/v1/chains/{chainId}/blocks/{blockHash}/status`
+
+**Parameters:**
+- `chainId`: Human-readable chain ID or EVM chain ID
+- `blockHash`: Hash of the block to check
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "status": "PENDING", // PROPOSED, PENDING, FINALIZED, REJECTED
+    "height": 150290,
+    "approvals": 2,
+    "rejections": 0,
+    "requiredApprovals": 3,
+    "proposedAt": 1667890123,
+    "votingEndsAt": 1667890153
+  },
+  "error": null,
+  "requestId": "req-123456789"
+}
+```
+
+## Block Signing with Identity Module
+
+Blocks must be cryptographically signed before submission to establish their authenticity and maintain chain security. The Identity Module provides the secure signing capabilities while keeping private keys protected.
+
+### Block Signing Process
+
+1. Prepare the block data according to the chain's requirements
+2. Call the Identity Module's signature endpoint with the block object and object type
+3. Submit the block along with its signature to the Chains API
+
+### Example: Block Signing and Submission
+
+```javascript
+const axios = require('axios');
+
+// Set up API clients
+const chainsApi = axios.create({
+  baseURL: 'https://localhost:8443/api/v1/chains',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+const identityApi = axios.create({
+  baseURL: 'https://localhost:8443/api/v1/identity',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Handle block proposal with direct object signing via Identity Module
+async function handleBlockProposal(notification) {
+  console.log(`Time to propose block at height ${notification.data.height}`);
+  
+  try {
+    // Check if this validator is selected to propose
+    if (notification.data.validatorAddress !== validatorAddress) {
+      console.log('Not selected as proposer for this block');
+      return;
+    }
+    
+    // 1. Prepare block data
+    const block = {
+      height: notification.data.height,
+      parentHash: notification.data.parentHash,
+      timestamp: Math.floor(Date.now() / 1000),
+      data: "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d" // Arbitrary data encoded as hex
+    };
+    
+    // 2. Request signature from Identity Module with direct object signing
+    const signatureResponse = await identityApi.post('/signatures', {
+      object: block,
+      objectType: 'block',
+      keyId: "key-abc123", // Agent's validator key ID
+      signatureScheme: "eddsa"
+    });
+    
+    if (!signatureResponse.data.success) {
+      throw new Error(`Failed to sign block: ${signatureResponse.data.error.message}`);
+    }
+    
+    const signature = signatureResponse.data.data.signature;
+    
+    // 3. Submit the block with its signature to the Chains API
+    const response = await chainsApi.post(`/${notification.chainId}/blocks`, {
+      requestId: notification.requestId,
+      block: block,
+      signature: signature // Signature obtained from Identity Module
+    });
+    
+    if (response.data.success) {
+      console.log(`Block proposed successfully: ${response.data.data.blockHash}`);
+    } else {
+      console.error(`Error proposing block: ${response.data.error.message}`);
+    }
+  } catch (error) {
+    console.error('Failed to propose block:', error.message);
+  }
+}
+```
+
+### Python Example: Block Signing
+
+```python
+import requests
+import time
+
+# Set up API clients
+chains_api_url = 'https://localhost:8443/api/v1/chains'
+identity_api_url = 'https://localhost:8443/api/v1/identity'
+api_key = 'YOUR_API_KEY'
+headers = {
+    'X-API-Key': api_key,
+    'Content-Type': 'application/json'
+}
+
+def handle_block_proposal(notification, validator_address, validator_key_id):
+    """Handle a block proposal notification"""
+    print(f"Time to propose block at height {notification['data']['height']}")
+    
+    # Check if this validator is selected to propose
+    if notification['data']['validatorAddress'] != validator_address:
+        print('Not selected as proposer for this block')
+        return
+    
+    try:
+        # 1. Prepare block data
+        block = {
+            'height': notification['data']['height'],
+            'parentHash': notification['data']['parentHash'],
+            'timestamp': int(time.time()),
+            'data': "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d"  # Arbitrary data
+        }
+        
+        # 2. Request signature from Identity Module with direct object signing
+        signature_payload = {
+            'object': block,
+            'objectType': 'block',
+            'keyId': validator_key_id,
+            'signatureScheme': 'eddsa'
+        }
+        
+        signature_response = requests.post(
+            f"{identity_api_url}/signatures",
+            headers=headers,
+            json=signature_payload
+        )
+        
+        signature_data = signature_response.json()
+        if not signature_data['success']:
+            raise Exception(f"Failed to sign block: {signature_data['error']['message']}")
+        
+        signature = signature_data['data']['signature']
+        
+        # 3. Submit the block with its signature to the Chains API
+        block_payload = {
+            'requestId': notification['requestId'],
+            'block': block,
+            'signature': signature
+        }
+        
+        response = requests.post(
+            f"{chains_api_url}/{notification['chainId']}/blocks",
+            headers=headers,
+            json=block_payload
+        )
+        
+        response_data = response.json()
+        if response_data['success']:
+            print(f"Block proposed successfully: {response_data['data']['blockHash']}")
+        else:
+            print(f"Error proposing block: {response_data['error']['message']}")
+            
+    except Exception as e:
+        print(f"Failed to propose block: {str(e)}")
+```
+
+### Vote Signing for Block Validation
+
+Similar to block proposals, votes can also be signed directly using the Identity Module:
+
+```javascript
+// Handle block vote notification with direct object signing
+async function handleBlockVote(notification) {
+  console.log(`Time to vote on block at height ${notification.data.height}`);
+  
+  try {
+    // Fetch block data
+    const blockResponse = await chainsApi.get(
+      `/${notification.chainId}/blocks/${notification.data.blockHash}`
+    );
+    
+    if (!blockResponse.data.success) {
+      console.error(`Failed to fetch block: ${blockResponse.data.error.message}`);
+      return;
+    }
+    
+    const block = blockResponse.data.data;
+    
+    // Validate the block
+    const validationResult = validateBlock(block);
+    const vote = validationResult.valid ? "APPROVE" : "REJECT";
+    const reason = validationResult.reason;
+    
+    // Prepare vote data
+    const voteData = {
+      blockHash: notification.data.blockHash,
+      validatorAddress: validatorAddress,
+      vote: vote,
+      reason: reason
+    };
+    
+    // Request signature from Identity Module with direct object signing
+    const signatureResponse = await identityApi.post('/signatures', {
+      object: voteData,
+      objectType: 'vote',
+      keyId: "key-abc123", // Agent's validator key ID
+      signatureScheme: "eddsa"
+    });
+    
+    if (!signatureResponse.data.success) {
+      throw new Error(`Failed to sign vote: ${signatureResponse.data.error.message}`);
+    }
+    
+    const signature = signatureResponse.data.data.signature;
+    
+    // Submit the vote with signature
+    const response = await chainsApi.post(
+      `/${notification.chainId}/blocks/${notification.data.blockHash}/votes`,
+      {
+        requestId: notification.requestId,
+        validatorAddress: validatorAddress,
+        vote: vote,
+        reason: reason,
+        signature: signature
+      }
+    );
+    
+    if (response.data.success) {
+      console.log(`Vote submitted successfully (${vote})`);
+      console.log(`Current approvals: ${response.data.data.currentApprovals}/${response.data.data.requiredApprovals}`);
+    } else {
+      console.error(`Error submitting vote: ${response.data.error.message}`);
+    }
+  } catch (error) {
+    console.error('Failed to vote on block:', error.message);
+  }
+}
+```
+
+## Complete JavaScript Example
+
+The following example shows a complete implementation of an agent participating in consensus:
+
+```javascript
+const axios = require('axios');
+const WebSocket = require('ws');
+
+// Create configured API clients
+const chainsApi = axios.create({
+  baseURL: 'https://localhost:8443/api/v1/chains',
+  headers: {
+    'X-API-Key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  }
+});
+
+const identityApi = axios.create({
+  baseURL: 'https://localhost:8443/api/v1/identity',
+  headers: {
+    'X-API-Key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  }
+});
+
+// Agent setup
+const agentId = "agent-xyz-123";
+const validatorAddress = "0x123abc...";
+const validatorKeyId = "key-abc123"; // Key ID for signing operations using Identity Module
+const chainId = "cc-finance-derivatives-mainnet";
+
+// Subscribe to chain notifications
+async function subscribeToChain() {
+  try {
+    const response = await chainsApi.post(`/${chainId}/subscribe`, {
+      agentId: agentId,
+      notificationTypes: ["PROPOSE_BLOCK", "VOTE_BLOCK", "FINALIZE_BLOCK"],
+      callbackUrl: "http://localhost:3000/notifications",
+      publicKey: "0xdef456..."
+    });
+    
+    if (response.data.success) {
+      const subscription = response.data.data;
+      console.log(`Subscription ID: ${subscription.subscriptionId}`);
+      console.log(`Token: ${subscription.subscriptionToken}`);
+      console.log(`Expires at: ${new Date(subscription.expiresAt * 1000).toISOString()}`);
+      
+      // Connect to WebSocket with subscription token
+      connectToWebSocket(chainId, subscription.subscriptionToken);
+      return subscription;
+    } else {
+      console.error(`Error: ${response.data.error.message}`);
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to subscribe agent:', error.message);
+    return null;
+  }
+}
+
+// WebSocket connection for real-time notifications
+function connectToWebSocket(chainId, token) {
+  // Connect to the local WebSocket endpoint
+  const ws = new WebSocket(`ws://localhost:8443/chains/${chainId}/subscribe?token=${token}`);
+  
+  ws.on('open', () => {
+    console.log('WebSocket connection established');
+  });
+  
+  ws.on('message', (data) => {
+    const notification = JSON.parse(data);
+    console.log('Received notification:', notification);
+    
+    // Handle different notification types
+    switch(notification.type) {
+      case 'PROPOSE_BLOCK':
+        handleBlockProposal(notification);
+        break;
+      case 'VOTE_BLOCK':
+        handleBlockVote(notification);
+        break;
+      case 'FINALIZE_BLOCK':
+        handleBlockFinalization(notification);
+        break;
+      default:
+        console.log(`Unknown notification type: ${notification.type}`);
+    }
+  });
+  
+  ws.on('error', (error) => {
+    console.error('WebSocket error:', error);
+  });
+  
+  ws.on('close', () => {
+    console.log('WebSocket connection closed');
+    // In a production environment, implement reconnection logic
+    setTimeout(() => subscribeToChain(), 5000);
+  });
+  
+  return ws;
+}
+
+// Handle block proposal notification
+async function handleBlockProposal(notification) {
+  console.log(`Time to propose block at height ${notification.data.height}`);
+  
+  try {
+    // Check if this validator is selected to propose
+    if (notification.data.validatorAddress !== validatorAddress) {
+      console.log('Not selected as proposer for this block');
+      return;
+    }
+    
+    // 1. Prepare block data
+    const block = {
+      height: notification.data.height,
+      parentHash: notification.data.parentHash,
+      timestamp: Math.floor(Date.now() / 1000),
+      data: "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d" // Arbitrary data encoded as hex
+    };
+    
+    // 2. Request signature from Identity Module with direct object signing
+    const signatureResponse = await identityApi.post('/signatures', {
+      object: block,
+      objectType: 'block',
+      keyId: validatorKeyId,
+      signatureScheme: "eddsa"
+    });
+    
+    if (!signatureResponse.data.success) {
+      throw new Error(`Failed to sign block: ${signatureResponse.data.error.message}`);
+    }
+    
+    const signature = signatureResponse.data.data.signature;
+    
+    // 3. Submit the block with its signature to the Chains API
+    const response = await chainsApi.post(`/${notification.chainId}/blocks`, {
+      requestId: notification.requestId,
+      block: block,
+      signature: signature
+    });
+    
+    if (response.data.success) {
+      console.log(`Block proposed successfully: ${response.data.data.blockHash}`);
+    } else {
+      console.error(`Error proposing block: ${response.data.error.message}`);
+    }
+  } catch (error) {
+    console.error('Failed to propose block:', error.message);
+  }
+}
+
+// Handle block vote notification
+async function handleBlockVote(notification) {
+  console.log(`Time to vote on block at height ${notification.data.height}`);
+  
+  try {
+    // 1. Fetch the full block data
+    const blockResponse = await chainsApi.get(
+      `/${notification.chainId}/blocks/${notification.data.blockHash}`
+    );
+    
+    if (!blockResponse.data.success) {
+      console.error(`Failed to fetch block: ${blockResponse.data.error.message}`);
+      return;
+    }
+    
+    const block = blockResponse.data.data;
+    
+    // 2. Validate the block
+    const validationResult = validateBlock(block);
+    const vote = validationResult.valid ? "APPROVE" : "REJECT";
+    const reason = validationResult.reason || "Valid block";
+    
+    // 3. Prepare vote data for signing
+    const voteData = {
+      blockHash: notification.data.blockHash,
+      validatorAddress: validatorAddress,
+      vote: vote,
+      reason: reason
+    };
+    
+    // 4. Request signature from Identity Module with direct object signing
+    const signatureResponse = await identityApi.post('/signatures', {
+      object: voteData,
+      objectType: 'vote',
+      keyId: validatorKeyId,
+      signatureScheme: "eddsa"
+    });
+    
+    if (!signatureResponse.data.success) {
+      throw new Error(`Failed to sign vote: ${signatureResponse.data.error.message}`);
+    }
+    
+    const signature = signatureResponse.data.data.signature;
+    
+    // 5. Submit the vote with signature
+    const response = await chainsApi.post(
+      `/${notification.chainId}/blocks/${notification.data.blockHash}/votes`,
+      {
+        requestId: notification.requestId,
+        validatorAddress: validatorAddress,
+        vote: vote,
+        reason: reason,
+        signature: signature
+      }
+    );
+    
+    if (response.data.success) {
+      console.log(`Vote submitted successfully (${vote})`);
+      console.log(`Current approvals: ${response.data.data.currentApprovals}/${response.data.data.requiredApprovals}`);
+    } else {
+      console.error(`Error submitting vote: ${response.data.error.message}`);
+    }
+  } catch (error) {
+    console.error('Failed to vote on block:', error.message);
+  }
+}
+
+// Handle block finalization notification
+function handleBlockFinalization(notification) {
+  console.log(`Block at height ${notification.data.height} has been finalized`);
+  console.log(`Block hash: ${notification.data.blockHash}`);
+  console.log(`Validators signed: ${notification.data.validatorsSigned}`);
+  console.log(`Voting power signed: ${notification.data.signedVotingPower}/${notification.data.totalVotingPower}`);
+  
+  // In a real implementation, you might:
+  // 1. Update local state
+  // 2. Notify connected clients
+  // 3. Execute any actions that were waiting for this block to be finalized
+}
+
+// Example block validation function
+function validateBlock(block) {
+  // In a real implementation, you would:
+  // 1. Verify the block structure
+  // 2. Validate the header (height, parent hash, timestamp)
+  // 3. Verify the data integrity
+  // 4. Check the proposer's signature
+  
+  // Simplified example
+  return {
+    valid: true,
+    reason: "Block structure and data validated successfully"
+  };
+}
+
+// Start the agent
+subscribeToChain();
+```
+
+## Error Handling
+
+When using the Agent Consensus Participation API, handle these common error scenarios:
+
+1. **Deadline Exceeded**: If you fail to respond to a notification before its deadline, your proposal or vote will be rejected.
+
+2. **Invalid Signatures**: If a block or vote signature is invalid, it will be rejected. Always ensure proper key management.
+
+3. **Network Failures**: Implement proper reconnection logic for WebSocket connections to maintain consensus participation.
+
+4. **Concurrency Issues**: Ensure your agent can handle multiple concurrent notifications, especially on busy chains.
+
+## Best Practices
+
+1. **Proper Error Handling**: Always handle potential failures in the signature or submission process.
+
+2. **State Management**: Maintain a local cache of recent blocks to expedite validation.
+
+3. **Secure Key Management**: Integrate securely with the Identity Module for key operations.
+
+4. **Response Monitoring**: Track response times to ensure they are well within deadline constraints.
+
+5. **Context Awareness**: Make your agent aware of conversations on many different platforms - X, EthResearch etc.
+
+## Related Documentation
+
+- [Chains API](/developer-resources/api/chains-api) - Complete Chains API documentation
+- [Identity Module API](/developer-resources/api/identity-api) - API for secure key management and signing
+- [Common API Details](/developer-resources/api/common-api-details) - Shared API conventions and formats
+- [Chain Identity System](/technical-architecture/chain-identity) - Overview of the chain identity system
+- [Block Proposal Process](/technical-architecture/node-modifications/block-proposal) - Technical details of the block proposal mechanism
+- [Validator Management](/technical-architecture/validators) - Details on validator management
+- [Agent Development](/developer-resources/agent) - Guide to developing agents 

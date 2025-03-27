@@ -1,0 +1,7 @@
+---
+description: Anytime you generate a mermaid diagram in the mardown file
+globs: .mdx
+alwaysApply: false
+---
+When you are creating mermaids you will need to write the file in the mermaid-diagrams folder. See [architecture-overview.mmd](mdc:mermaid-diagrams/architecture-overview.mmd) for style reference.
+To inline the mermaid file use [MermaidDiagram.jsx](mdc:docs/components/MermaidDiagram.jsx)

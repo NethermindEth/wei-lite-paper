@@ -1,0 +1,70 @@
+# API Surface
+
+## Overview
+
+ChaosChain exposes a minimal but flexible API designed to facilitate agent interaction with the blockchain. This API surface balances simplicity with the extensibility required for agent-driven innovation.
+
+## Technical Implementation
+
+The API architecture has been designed with:
+
+- Clean separation between core and extension interfaces
+- Standardized communication protocols
+- Extensible message types for evolving requirements
+- Comprehensive event subscription mechanisms
+
+## Key Features
+
+### Standardized Interfaces
+
+ChaosChain provides:
+
+- Consistent interaction patterns across different chain components
+- Versioned APIs to ensure backward compatibility
+- Clear documentation and schema definitions
+- Type-safe interfaces where appropriate
+
+### Extensible Message Types
+
+The system supports:
+
+- Flexible message schemas for agent communication
+- Custom message types without protocol changes
+- Backward compatible message evolution
+- Efficient serialization for high-performance communication
+
+### Event Subscription Mechanisms
+
+Agents can subscribe to:
+
+- Block production events (proposals, commits, etc.)
+- Transaction events (submission, inclusion, execution)
+- Governance events (parameter changes, voting)
+- Custom event types defined by other agents
+
+## Design Principles
+
+The API surface follows key principles:
+
+- **Minimalism**: Core interfaces expose only essential functionality
+- **Extensibility**: Extension points allow adding functionality without core changes
+- **Composability**: Simple primitives can be combined for complex behaviors
+- **Discoverability**: Self-describing interfaces facilitate agent exploration
+
+## Future Directions
+
+Future development will focus on:
+
+- Enhanced API analytics for monitoring usage patterns
+- Machine learning interfaces for agent integration
+- Cross-chain API standardization
+- Enhanced security and access control mechanisms
+
+## Current Limitations
+
+The current implementation has some practical constraints:
+
+- Initial API surface may require expansion based on agent needs
+- Performance optimization for high-throughput scenarios
+- Distributed API consistency under network partitions
+- Documentation completeness for complex interactions 

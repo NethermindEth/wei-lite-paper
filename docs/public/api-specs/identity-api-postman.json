@@ -1,0 +1,367 @@
+{
+  "info": {
+    "name": "ChaosChain Identity API",
+    "description": "API for key management and signature operations in ChaosChain",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "chaoschain-api-team"
+  },
+  "item": [
+    {
+      "name": "Key Management",
+      "description": "Endpoints for managing cryptographic keys",
+      "item": [
+        {
+          "name": "Generate Key Pair",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyType\": \"ed25519\",\n  \"metadata\": {\n    \"role\": \"validator\",\n    \"environment\": \"production\"\n  },\n  \"setAsPrimary\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys"]
+            },
+            "description": "Generates a new key pair for the agent, with the private key securely stored in the Identity Module."
+          },
+          "response": []
+        },
+        {
+          "name": "List Known Keys",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys?keyType=ed25519&role=validator&limit=20&page=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys"],
+              "query": [
+                {
+                  "key": "keyType",
+                  "value": "ed25519",
+                  "description": "Filter by key type"
+                },
+                {
+                  "key": "role",
+                  "value": "validator",
+                  "description": "Filter by role metadata"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number for pagination"
+                }
+              ]
+            },
+            "description": "Lists all stored public keys with optional filtering."
+          },
+          "response": []
+        },
+        {
+          "name": "Rotate Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyType\": \"ed25519\",\n  \"currentKeyId\": \"key-abc123\",\n  \"metadata\": {\n    \"role\": \"validator\",\n    \"environment\": \"production\"\n  },\n  \"reason\": \"scheduled\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys/rotate",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys", "rotate"]
+            },
+            "description": "Generates a new key pair and sets it as the agent's primary key, while recording the previous key in the historical key registry."
+          },
+          "response": []
+        },
+        {
+          "name": "Register Public Key",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyId\": \"external-key-123\",\n  \"publicKey\": \"base64-encoded-public-key\",\n  \"keyType\": \"ed25519\",\n  \"metadata\": {\n    \"owner\": \"validator-xyz\",\n    \"purpose\": \"message-verification\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys/external",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys", "external"]
+            },
+            "description": "Registers an external public key in the local registry for later use in signature verification."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Public Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys/key-abc123",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys", "key-abc123"]
+            },
+            "description": "Retrieves a public key by ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Public Key by Owner",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys/owner/agent-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys", "owner", "agent-123"]
+            },
+            "description": "Retrieves a public key by owner ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Historical Public Keys",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/identity/keys/historical?keyType=ed25519&timestampStart=1624567890&timestampEnd=1634567890&limit=20&page=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "keys", "historical"],
+              "query": [
+                {
+                  "key": "keyType",
+                  "value": "ed25519",
+                  "description": "Filter by key type"
+                },
+                {
+                  "key": "timestampStart",
+                  "value": "1624567890",
+                  "description": "Start timestamp (Unix time)"
+                },
+                {
+                  "key": "timestampEnd",
+                  "value": "1634567890",
+                  "description": "End timestamp (Unix time)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number for pagination"
+                }
+              ]
+            },
+            "description": "Retrieves historical public keys for the requesting agent."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Signature Operations",
+      "description": "Endpoints for signature creation and verification",
+      "item": [
+        {
+          "name": "Request Signature",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"base64-encoded-message\",\n  \"keyId\": \"key-abc123\",\n  \"signatureScheme\": \"eddsa\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/signatures",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "signatures"]
+            },
+            "description": "Requests a signature for a specific message using the agent's private key."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Signature",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"base64-encoded-message\",\n  \"signature\": \"base64-encoded-signature\",\n  \"publicKey\": \"base64-encoded-public-key\",\n  \"signatureScheme\": \"eddsa\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/signatures/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "signatures", "verify"]
+            },
+            "description": "Verifies a signature against a message and public key."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Signature (using key ID)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"base64-encoded-message\",\n  \"signature\": \"base64-encoded-signature\",\n  \"keyId\": \"key-abc123\",\n  \"signatureScheme\": \"eddsa\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/signatures/verify",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "signatures", "verify"]
+            },
+            "description": "Verifies a signature against a message using a stored key ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Aggregated Signature",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    \"base64-encoded-message-1\",\n    \"base64-encoded-message-2\",\n    \"base64-encoded-message-3\"\n  ],\n  \"publicKeys\": [\n    \"base64-encoded-public-key-1\",\n    \"base64-encoded-public-key-2\",\n    \"base64-encoded-public-key-3\"\n  ],\n  \"aggregatedSignature\": \"base64-encoded-aggregated-signature\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/identity/signatures/verify-aggregated",
+              "host": ["{{baseUrl}}"],
+              "path": ["identity", "signatures", "verify-aggregated"]
+            },
+            "description": "Verifies an aggregated BLS signature against multiple messages and public keys."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:8443/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "YOUR_API_KEY",
+      "type": "string"
+    }
+  ]
+} 

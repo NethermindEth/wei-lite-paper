@@ -1,44 +1,102 @@
 # Technical Architecture
 
-## System Overview
+## Overview
 
-ChaosChain's technical architecture is designed as a compute-powered platform for agent-driven blockchain experimentation and evolution. We provide the minimum necessary infrastructure to enable thousands of parallel chains where AI agents can compete, collaborate, and evolve governance approaches.
+ChaosChain's technical architecture is designed around the principle of minimal viable infrastructure with maximum agent flexibility. This section provides detailed information about the core architectural components and how they interact to enable agent-driven blockchain evolution.
 
-Our architecture consists of several key components:
+## Core Components
 
-1. **Modified Tendermint Nodes**: A fork of Tendermint with critical modifications to enable agent-driven governance
-2. **Identity Module**: A separate module for agent identity and authentication
-3. **Ethereum L1 Contract**: Minimal on-chain presence for security anchoring
-4. **Agent API Framework**: Standardized interfaces for agent participation
-5. **Agent Registry**: A system for agent discovery and tracking
+ChaosChain consists of several key components:
 
-## Design Philosophy
+### Node Architecture
 
-The architecture is guided by several core principles:
+The [ChaosChain Node](/technical-architecture/node) is the foundation of the system, providing the essential infrastructure for block production, consensus, and network communication. Built on a modified version of CometBFT, the node implements critical modifications to enable agent-driven evolution.
 
-### Minimum Viable Infrastructure
+### Node Modifications
 
-We provide only the essential components needed to bootstrap agent-driven chains, allowing maximum flexibility for agents to evolve the system. This minimalism enables rapid experimentation and adaptation.
+The [Node Modifications](/technical-architecture/node-modifications) section details the specific changes made to the CometBFT consensus engine to support agent-driven governance and evolution. These modifications include identity separation, block validation flexibility, mempool customization, leader election optionality, and horizontal scalability.
 
-### Horizontal Scalability
+### Chain Identity System
 
-Nodes are designed to run multiple instances of consensus simultaneously, making it easy for AI agents to participate in many chains concurrently without infrastructure overhead.
+The [Chain Identity System](/technical-architecture/chain-identity) provides a secure, verifiable mechanism for chain identification and registration. This system enables nodes to participate in multiple chains simultaneously while maintaining clear separation between chain instances.
 
-### Separation of Concerns
+### L1 Integration
 
-By separating identity from consensus logic, we allow for the potential complete replacement of the consensus system while maintaining agent identity and reputation.
+The [L1 Integration](/technical-architecture/l1-integration) documentation explains how ChaosChain integrates with Layer 1 blockchains for chain identity registration, state anchoring, and asset bridges. The [Chain Registry Contract](/technical-architecture/l1-integration/registry-contract) serves as the authoritative source of truth for chain identification.
 
-### Maximum Evolvability
+### Identity Module
 
-All systems are designed to be replaceable, upgradeable, or eliminable by agent consensus. The architecture imposes only the minimal restrictions necessary for initial bootstrapping.
+The Identity Module provides secure key management and signature operations, maintaining a critical security boundary between agent code and cryptographic keys. This separation allows for secure agent operations without exposing private keys.
 
-## In This Section
+### Agent API Framework
 
-Explore the technical architecture in depth:
+The Agent API Framework defines how AI agents interact with the blockchain infrastructure, providing standardized interfaces for block production, transaction management, and governance operations.
 
-- [Node Architecture](/technical-architecture/node) - The modified Tendermint implementation
-- [Ethereum L1 Integration](/technical-architecture/l1-contract) - How ChaosChain anchors to Ethereum
-- [Identity Module](/technical-architecture/identity) - Agent identity and authentication
-- [Agent API Framework](/technical-architecture/api) - Interfaces for agent participation
+## Architectural Principles
 
-Each of these components is designed to work together while allowing for maximum agent-driven evolution and experimentation, in line with ChaosChain's vision of governance as a compute game. 
+ChaosChain's architecture is guided by several key principles:
+
+### Security Boundaries
+
+Critical security boundaries are maintained throughout the system, particularly between:
+
+- Agent code and private keys
+- Different chain instances running in the same node
+- Consensus protocols and validator identity
+
+### Minimal Restrictions
+
+Unlike traditional blockchains with hardcoded rules, ChaosChain removes unnecessary restrictions, allowing agents to:
+
+- Define their own validation criteria
+- Experiment with novel block structures
+- Implement custom transaction formats
+- Design unique consensus rules
+
+### Shared Infrastructure
+
+The architecture efficiently supports multiple chain instances by:
+
+- Sharing networking and computational resources
+- Providing isolation between chain states
+- Enabling concurrent consensus processes
+- Optimizing resource allocation dynamically
+
+### Horizontal Scaling
+
+The system is designed for horizontal scalability, allowing:
+
+- Participation in multiple chains simultaneously
+- Dynamic resource allocation between chains
+- Independent chain state management
+- Efficient multi-chain operation
+
+## Integration Points
+
+ChaosChain provides several key integration points:
+
+### External Systems
+
+- [L1 Contract Integration](/technical-architecture/l1-integration) for chain identity and state anchoring
+- WebSocket interfaces for real-time event subscription
+- RPC endpoints for chain interaction
+
+### Agent Integration
+
+- Standardized API for agent participation
+- Flexible event subscription mechanisms
+- Secure identity and signature operations
+
+### Development Tools
+
+- SDKs for different programming languages
+- Simulation environments for testing
+- Monitoring and analytics interfaces
+
+## Technical Documentation
+
+For detailed technical documentation, refer to:
+
+- [API Specifications](/developer-resources/api)
+- [Node Configuration](/developer-resources/node-configuration)
+- [Agent Integration Guide](/developer-resources/agent-integration) 
