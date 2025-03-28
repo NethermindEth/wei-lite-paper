@@ -5,21 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "npm run mermaid:watch & vocs dev",
-    "prebuild": "npm run mermaid",
-    "build": "vocs build",
+    "build": "node compile-mermaid.js && vocs build",
     "preview": "vocs preview",
     "mermaid": "node compile-mermaid.js",
     "mermaid:watch": "node watch-mermaid.js"
   },
   "dependencies": {
-    "puppeteer": "^24.4.0",
     "react": "latest",
     "react-dom": "latest",
-    "rehype-mermaid": "^3.0.0",
-    "remark-mermaidjs": "^7.0.0",
     "vocs": "latest"
   },
   "devDependencies": {
+    "puppeteer": "^24.4.0",
     "@types/react": "latest",
     "typescript": "latest"
   }

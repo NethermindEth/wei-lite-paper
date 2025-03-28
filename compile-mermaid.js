@@ -2,8 +2,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import puppeteer from 'puppeteer';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sourceDirPath = path.join(__dirname, 'mermaid-diagrams');
@@ -34,7 +34,124 @@ const themes = [
   }
 ];
 
-async function renderMermaidToSvg(mermaidCode, outputBasePath, filename) {
+// Generate hash for a file
+function hashFile(filePath) {
+  try {
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
+    return crypto.createHash('md5').update(fileContent).digest('hex');
+  } catch (error) {
+    console.error(`Error hashing file ${filePath}:`, error.message);
+    return null;
+  }
+}
+
+// Function to check if a specific file needs to be updated
+function needsUpdate(sourceFile, targetBaseName) {
+  // Get the hash of the source file
+  const sourceHash = hashFile(sourceFile);
+  if (!sourceHash) return true; // If we can't hash, assume update is needed
+  
+  // Check each theme
+  for (const theme of themes) {
+    const svgFilePath = path.join(outputDirPath, `${targetBaseName}-${theme.name}.svg`);
+    
+    // If the SVG file doesn't exist, it needs update
+    if (!fs.existsSync(svgFilePath)) {
+      return true;
+    }
+    
+    // Look for a hash file associated with this SVG
+    const hashFilePath = path.join(outputDirPath, `${targetBaseName}-${theme.name}.hash`);
+    
+    // If hash file doesn't exist or doesn't match, update is needed
+    if (!fs.existsSync(hashFilePath)) {
+      return true;
+    }
+    
+    const savedHash = fs.readFileSync(hashFilePath, 'utf-8').trim();
+    if (savedHash !== sourceHash) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+// Function to check if any files need updating
+function getFilesToUpdate(fileArg = null) {
+  if (fileArg) {
+    // Check a specific file
+    const filePath = path.join(sourceDirPath, fileArg);
+    if (!fs.existsSync(filePath)) {
+      console.error(`File not found: ${filePath}`);
+      process.exit(1);
+    }
+    
+    const baseName = fileArg.replace('.mmd', '');
+    if (needsUpdate(filePath, baseName)) {
+      return [{ 
+        path: filePath, 
+        baseName,
+        hash: hashFile(filePath),
+        origName: fileArg
+      }];
+    }
+    return [];
+  } else {
+    // Check all files
+    const files = fs.readdirSync(sourceDirPath);
+    const mermaidFiles = files.filter(file => file.endsWith('.mmd'));
+    
+    return mermaidFiles
+      .map(file => {
+        const filePath = path.join(sourceDirPath, file);
+        const baseName = file.replace('.mmd', '');
+        const fileHash = hashFile(filePath);
+        
+        return { 
+          path: filePath, 
+          baseName, 
+          hash: fileHash,
+          needsUpdate: needsUpdate(filePath, baseName),
+          origName: file
+        };
+      })
+      .filter(file => file.needsUpdate);
+  }
+}
+
+// Main function
+async function main() {
+  // Get the file argument if provided
+  const fileArg = process.argv.length > 2 ? process.argv[2] : null;
+  
+  // Check if any files need updating
+  const filesToUpdate = getFilesToUpdate(fileArg);
+  
+  if (filesToUpdate.length === 0) {
+    console.log('✅ All Mermaid SVG files are up to date!');
+    process.exit(0);
+  }
+  
+  console.log(`🔄 Found ${filesToUpdate.length} Mermaid file(s) that need updating`);
+  
+  // Dynamically import puppeteer only if needed
+  console.log('📦 Importing puppeteer...');
+  const puppeteer = await import('puppeteer');
+  
+  // Process each file that needs updating
+  for (const file of filesToUpdate) {
+    console.log(`🔄 Processing ${file.origName || path.basename(file.path)}...`);
+    const mermaidCode = fs.readFileSync(file.path, 'utf-8');
+    const outputBasePath = path.join(outputDirPath, file.baseName);
+    await renderMermaidToSvg(puppeteer.default, mermaidCode, outputBasePath, file);
+  }
+  
+  console.log('✅ All Mermaid SVG files have been updated!');
+}
+
+// Render mermaid diagram to SVG function
+async function renderMermaidToSvg(puppeteer, mermaidCode, outputBasePath, fileInfo) {
   const browser = await puppeteer.launch();
   
   // Generate each theme version
@@ -148,6 +265,10 @@ async function renderMermaidToSvg(mermaidCode, outputBasePath, filename) {
     // Save the SVG to file
     fs.writeFileSync(outputPath, svgCode);
     
+    // Save the hash file
+    const hashFilePath = `${outputBasePath}-${themeConfig.name}.hash`;
+    fs.writeFileSync(hashFilePath, fileInfo.hash);
+    
     await page.close();
     console.log(`✅ Generated (${themeConfig.name}): ${outputPath}`);
   }
@@ -155,41 +276,7 @@ async function renderMermaidToSvg(mermaidCode, outputBasePath, filename) {
   await browser.close();
 }
 
-// Process all .mmd files in the source directory
-async function processMermaidFiles() {
-  const files = fs.readdirSync(sourceDirPath);
-  
-  const mermaidFiles = files.filter(file => file.endsWith('.mmd'));
-  
-  for (const file of mermaidFiles) {
-    const filePath = path.join(sourceDirPath, file);
-    const outputFileBasePath = path.join(outputDirPath, file.replace('.mmd', ''));
-    
-    const mermaidCode = fs.readFileSync(filePath, 'utf-8');
-    await renderMermaidToSvg(mermaidCode, outputFileBasePath, file);
-  }
-}
-
-// If a specific file is provided as an argument, process only that file
-async function main() {
-  if (process.argv.length > 2) {
-    const specifiedFile = process.argv[2];
-    const filePath = path.join(sourceDirPath, specifiedFile);
-    
-    if (!fs.existsSync(filePath)) {
-      console.error(`File not found: ${filePath}`);
-      process.exit(1);
-    }
-    
-    const outputFileBasePath = path.join(outputDirPath, specifiedFile.replace('.mmd', ''));
-    const mermaidCode = fs.readFileSync(filePath, 'utf-8');
-    await renderMermaidToSvg(mermaidCode, outputFileBasePath, specifiedFile);
-  } else {
-    // Process all .mmd files
-    await processMermaidFiles();
-  }
-}
-
+// Run the main function
 main().catch(error => {
   console.error('Error:', error);
   process.exit(1);
