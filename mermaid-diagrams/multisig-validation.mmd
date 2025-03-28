@@ -1,0 +1,9 @@
+flowchart TD
+    A[Operation Request] --> B[Collect Validator Signatures]
+    B --> C{Threshold Reached?}
+    C -->|No| D[Continue Collecting]
+    C -->|Yes| E[Submit to Bridge]
+    E --> F[Verify Signatures]
+    F --> G{Valid?}
+    G -->|No| H[Reject]
+    G -->|Yes| I[Execute Operation] 

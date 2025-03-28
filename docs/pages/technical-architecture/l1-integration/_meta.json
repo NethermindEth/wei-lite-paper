@@ -1,4 +1,5 @@
 {
   "index": "Overview",
-  "registry-contract": "Chain Registry Contract"
+  "chain-registry": "Chain Registry Contract",
+  "bridge-contract": "Bridge Contract"
 } 

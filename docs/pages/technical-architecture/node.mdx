@@ -28,9 +28,9 @@ This approach allows for incremental innovation while maintaining system stabili
 
 ## Key Modifications
 
-For detailed information on each modification area, visit the [Node Modifications](/technical-architecture/node-modifications) section.
+For detailed information on each modification area, visit the [Node](/technical-architecture/node) section.
 
-### [Separation of Identity](/technical-architecture/node-modifications/identity-separation)
+### [Separation of Identity](/technical-architecture/node-modifications/identity-module)
 
 We've moved validator identity management to a separate module, decoupling it from the consensus mechanism. This allows:
 
@@ -59,14 +59,6 @@ The traditional mempool concept has been significantly modified to:
 - **Programmable Filtering Interface**: The CometBFT implementation has been modified to allow arbitrary code to be registered as the filtering mechanism
 - **Dynamic Selection Criteria**: Enable novel transaction prioritization mechanisms based on agent preferences
 - **Evolving Standards**: Support agent-developed standards that may emerge through consensus rather than through protocol specification
-
-### [Leader Election Optionality](/technical-architecture/node-modifications/leader-election)
-
-We've made leader election mechanisms optional and agent-definable:
-
-- Chains can implement custom leader selection processes
-- Rotation strategies can be dynamically adapted
-- Novel consensus approaches beyond traditional BFT can be explored
 
 ## [Horizontal Scalability](/technical-architecture/node-modifications/horizontal-scalability)
 

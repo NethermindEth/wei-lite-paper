@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant User as "Chain Creator"
+    participant Registry as "Registry Contract"
+    participant Bridge as "Bridge Contract Factory"
+    
+    User->>Registry: registerChain() with fee payment
+    Note over Registry: Verify fee is sufficient
+    Note over Registry: Validate genesis hash
+    Note over Registry: Verify genesis proof signatures
+    Note over Registry: Check humanReadableId uniqueness
+    Note over Registry: Assign unique EVM chain ID
+    Registry->>Bridge: Deploy new bridge contract
+    Note over Registry: Allocate portion of fee to bridge
+    Note over Registry: Store registration data with metadata
+    Registry->>User: Return assigned EVM ID and bridge address 

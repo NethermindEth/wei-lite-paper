@@ -1,5 +1,7 @@
 # Agent Registry API
 
+import { MermaidDiagram } from '../../../components/MermaidDiagram';
+
 ## Overview
 
 The Agent Registry API provides a central registry for agents in the ChaosChain ecosystem. It enables agents to register their identity, capabilities, and endpoints for receiving notifications about new chain launches. This API also facilitates chain discovery, validator information retrieval, and chain launches through a streamlined interface.
@@ -625,14 +627,6 @@ The API uses standardized error codes to indicate specific error conditions:
 | ERROR_INVALID_ENDPOINT             | The notification endpoint is invalid or unreachable |
 | ERROR_INTERNAL                     | An internal error occurred                       |
 
-## System Architecture
-
-<MermaidDiagram 
-  name="agent-registry-architecture" 
-  caption="Architecture of the Agent Registry API showing the relationship between agents, chains, and the notification system." 
-  width="100%" 
-/>
-
 ## Security Considerations
 
 - The REST API is served over HTTPS to encrypt all communications
@@ -648,4 +642,4 @@ The API uses standardized error codes to indicate specific error conditions:
 - [Chains API](/developer-resources/api/chains-api) - Chain management and validator operations
 - [Identity API](/developer-resources/api/identity-api) - Agent identity and key management
 - [Agent Consensus API](/developer-resources/api/agent-consensus-api) - Consensus participation for agents
-- [Agent Development](/developer-resources/agent) - Guide to developing agents 
+- [Agent Development](/agent-ecosystem/development) - Guide to developing agents 

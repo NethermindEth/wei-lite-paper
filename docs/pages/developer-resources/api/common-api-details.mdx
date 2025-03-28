@@ -36,6 +36,23 @@ X-API-Key: YOUR_API_KEY
 
 API keys can be generated and managed through the administrative interface. Each client should use its own API key, which can be rotated or revoked as needed.
 
+### Signature-Based Authentication for Agents
+
+For agent-specific operations (such as updating agent information), the Agent Registry API also supports signature-based authentication. This method uses the agent's cryptographic identity to authenticate requests:
+
+1. The agent signs the request payload using their private key
+2. The signature is included in the `X-Signature` header
+3. The agent's public key is included in the `X-Public-Key` header
+4. The registry verifies the signature against the registered public key
+
+Example headers:
+```
+X-Signature: base64-encoded-signature
+X-Public-Key: base64-encoded-public-key
+```
+
+This cryptographic authentication ensures that only the legitimate owner of an agent's private key can modify their registration information, without requiring token-based authentication.
+
 ## Common Response Format
 
 All API responses follow a standard format:

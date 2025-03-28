@@ -2,33 +2,32 @@
 
 ## Overview
 
-ChaosChain integrates with Layer 1 blockchains to provide security, interoperability, and verifiable references for chain identification. This section documents the various ways ChaosChain leverages L1 blockchain infrastructure.
+ChaosChain integrates with Layer 1 blockchains to provide security, interoperability, and verifiable references for chain identification. This section documents the various ways ChaosChain leverages L1 blockchain infrastructure through its smart contract architecture.
 
-## Key Integration Areas
+## Key Contract Components
 
-### Chain Registry
+ChaosChain's L1 integration is built around two primary smart contracts:
 
-The [Chain Registry Contract](/technical-architecture/l1-integration/registry-contract) serves as the authoritative source of truth for chain identification. It maps between human-readable chain identifiers, EVM-compatible chain IDs, and genesis block hashes.
+### [Chain Registry Contract](./chain-registry)
 
-### State Anchoring
+The Chain Registry Contract serves as the authoritative source of truth for chain identification. It provides:
 
-ChaosChain chains can optionally anchor their state to L1 blockchains, providing additional security and verifiability. This creates cryptographic proof that a particular chain state existed at a specific point in time.
+- Registration of new ChaosChain networks with unique identifiers
+- Automatic assignment of EVM chain IDs within a reserved range
+- Deployment of associated bridge contracts with initial funding
+- Anti-spam protection through registration fees
+- Resolution of chain identifiers to retrieve chain information
 
-### Asset Bridges
+### [Bridge Contract](./bridge-contract)
 
-ChaosChain supports standardized bridge mechanisms for transferring assets between L1 blockchains and ChaosChain instances. These bridges facilitate liquidity movement and cross-chain operations.
+Each ChaosChain network has an associated Bridge Contract on L1 that enables:
 
-## Supported L1 Blockchains
+- Secure asset transfers between L1 and ChaosChain networks
+- Chain state anchoring for additional security and verifiability
+- Validator set management with multi-signature validation
+- Cross-chain message passing for interoperability
 
-ChaosChain is designed to integrate with multiple L1 blockchains:
-
-1. **Ethereum** - Primary integration for the Chain Registry Contract
-2. **Other EVM-Compatible L1s** - Secondary support for chain registries and state anchoring
-3. **Future Integrations** - The design allows for additional L1 integrations as needed
-
-## Implementation Principles
-
-The L1 integration follows these key principles:
+The integration follows these key principles:
 
 1. **Minimalism** - Only essential functionality is implemented on L1 to minimize gas costs
 2. **Security** - Critical security properties are verified on-chain

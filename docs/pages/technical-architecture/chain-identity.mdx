@@ -36,49 +36,9 @@ Each ChaosChain has three forms of identification:
    - Serves as the immutable cryptographic identifier
    - Used for definitive chain verification
 
-## Registration Process
+## Chain Registration
 
-```mermaid
-sequenceDiagram
-    participant Agents as "Governing Agents"
-    participant Node as "ChaosChain Node"
-    participant L1 as "L1 Contract Registry"
-    
-    Agents->>Agents: Collectively define chain parameters
-    Agents->>Node: Generate genesis block
-    Node->>Node: Compute genesis block hash
-    Agents->>Agents: Sign genesis block hash
-    Note over Agents,Node: Create chain registration proof
-    Node->>L1: Submit registration transaction
-    Note over L1: Verify signatures
-    Note over L1: Check for ID conflicts
-    L1->>L1: Store chain registration
-    L1->>Node: Return registration confirmation
-    Node->>Node: Store registration details
-```
-
-The registration process follows these steps:
-
-1. **Genesis Creation**
-   - Governing agents collectively define the initial chain parameters
-   - A genesis block is generated based on these parameters
-   - The system computes the cryptographic hash of this genesis block
-
-2. **Proof Generation**
-   - A threshold of founding agents (e.g., 2/3 majority) sign the genesis block hash
-   - These signatures form a collective attestation of the genesis block's validity
-   - The signatures, genesis block, and requested chain IDs are packaged as a proof
-
-3. **L1 Registration**
-   - The proof is submitted to the ChaosChain Registry contract on the L1 blockchain
-   - The contract verifies the agent signatures against known public keys
-   - It checks for conflicts with existing human-readable and EVM chain IDs
-   - Upon successful verification, it registers the chain's identifiers
-
-4. **Registration Confirmation**
-   - The L1 contract emits an event confirming successful registration
-   - The node stores the registration transaction hash and block number
-   - This creates an auditable record of chain creation and registration
+For detailed information about the chain registration process, please refer to the [Chain Creation](/chain-management/creation) documentation.
 
 ## Chain Identity Verification
 
@@ -92,43 +52,26 @@ Participants can verify a chain's identity through several mechanisms:
    - Query the L1 contract directly using any of the three identifiers
    - Verify that all identifiers match the expected values
 
-3. **Abbreviated Hash Check**
-   - For a quick check, verify that the abbreviated genesis hash in the human-readable ID matches the full genesis hash
+3. **Registry API Query**
+   - Query the Agent Registry API for chain details:
+     ```
+     GET /api/v1/chains/{chainId}
+     ```
+   - Verify the chain's registration details and current status
 
-## Chain Evolution and Lineage
-
-When chains need to evolve beyond what's possible with normal governance:
-
-1. **Chain Deprecation**
-   - The current chain is marked as deprecated in the L1 registry
-   - A successor relationship is established with the new chain
-
-2. **Chain Migration**
-   - State migration tools help transfer assets and state to the new chain
-   - The original chain ID remains in the registry with its deprecated status
-
-3. **Lineage Tracking**
-   - The system maintains a chain's "family tree" for historical reference
-   - This preserves relationships between chains over time
-
-## EVM Compatibility
-
-The integer chain ID format is fully compatible with Ethereum Virtual Machine standards:
-
-1. **Transaction Signing**
-   - EIP-155 transaction signing uses the integer chain ID to prevent replay attacks
-   - Standard `eth_chainId` RPC methods return the correct ID
-
-2. **Wallet Integration**
-   - Wallets can display chain information using standard EIP-3085 format
-   - Users see consistent chain identification across different interfaces
-
-3. **Cross-Chain Compatibility**
-   - The integer format works with existing cross-chain bridges and tooling
-   - No modifications needed for EVM-based interoperability solutions
+4. **Chains API Query**
+   - Query the Chains API for comprehensive chain details:
+     ```
+     GET /api/v1/chains/{chainId}
+     ```
+   - Retrieve detailed chain information including identifiers, status, registration, and statistics
+   - This endpoint accepts either the human-readable chain ID or EVM chain ID as the identifier
+   - The response includes all three forms of chain identification for cross-verification
 
 ## Related Documentation
 
-- [L1 Contract Integration](/technical-architecture/l1-integration/registry-contract) - Details on the L1 chain registry contract
-- [Chain ID API](/developer-resources/api/chain-id-api) - API endpoints for chain identification
+- [Chain Management](/chain-management/) - Overview of chain management
+- [Chain Creation](/chain-management/creation) - Detailed guide on creating chains
+- [Chains API](/developer-resources/api/chains-api) - API endpoints for chain management
+- [Agent Registry API](/developer-resources/api/agent-registry-api) - Agent registration and chain notification
 - [Horizontal Scalability](/technical-architecture/node-modifications/horizontal-scalability) - How nodes manage multiple chains 

@@ -50,7 +50,6 @@ const identityApi = axios.create({
 
 // Global state
 let agentId = null;
-let registrationToken = null;
 let registryPublicKey = null; // Public key to verify notifications
 
 // Agent setup: Generate keys and register with the registry
@@ -88,7 +87,6 @@ async function setupAgent() {
     }
     
     agentId = registrationResponse.data.data.agent.agentId;
-    registrationToken = registrationResponse.data.data.registrationToken;
     
     console.log(`Agent registered successfully with ID: ${agentId}`);
     
@@ -314,6 +312,40 @@ async function main() {
 
 // Run the agent
 main();
+
+// Example function to update agent information using key-based authentication
+async function updateAgentInformation(newMetadata) {
+  try {
+    // 1. Prepare the update payload
+    const updatePayload = {
+      metadata: newMetadata
+    };
+    
+    // 2. Sign the payload using the agent's private key
+    const signature = await identityApi.post('/sign', {
+      keyId: 'your-key-id', // The key ID from the key generation step
+      data: JSON.stringify(updatePayload)
+    });
+    
+    // 3. Send the update request with the signature
+    const updateResponse = await registryApi.put(`/agents/${agentId}`, updatePayload, {
+      headers: {
+        'X-Signature': signature.data.data.signature,
+        'X-Public-Key': 'your-public-key' // The public key registered with the registry
+      }
+    });
+    
+    if (!updateResponse.data.success) {
+      throw new Error(`Failed to update agent: ${updateResponse.data.error.message}`);
+    }
+    
+    console.log('Agent information updated successfully');
+    return updateResponse.data.data.agent;
+  } catch (error) {
+    console.error('Agent update failed:', error.message);
+    throw error;
+  }
+}
 ```
 
 ## Python Example

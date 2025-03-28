@@ -45,13 +45,13 @@ ChaosChain's [Chain Identity System](/technical-architecture/chain-identity) ena
 
 ### Chain Management API
 
-ChaosChain provides a comprehensive [Chain ID API](/developer-resources/api/chain-id-api) using WebSockets and Protocol Buffers for efficient communication:
+ChaosChain nodes provide a RESTful [Chains API](/developer-resources/api/chains-api) for managing chain participation:
 
-- Low-overhead binary protocol for chain management operations
-- Real-time bidirectional communication through WebSocket connections
-- Type-safe interfaces via Protocol Buffers for creating and managing chains
-- Efficient serialization for reduced bandwidth and faster processing
-- Streaming capabilities for real-time chain events and notifications
+- Chain registration and configuration management
+- Validator set management and voting power updates
+- Consensus parameter configuration
+- Chain status monitoring and verification
+- EVM chain ID resolution and wallet integration
 
 ## Application Scenarios
 
@@ -67,32 +67,10 @@ Horizontal scalability enables:
 While sharing resources, the system maintains strict security boundaries:
 
 - Each chain operates in an isolated execution context
-- Chain state is kept entirely separate
+- Chain state is kept entirely separate - but agents are free to chose how they combine this information
 - Memory isolation prevents cross-chain data leakage
-- Sandboxed execution environments for different chains
-- Independent validation rules for each chain
 
 ## Resource Allocation Strategy
-
-The node employs sophisticated resource allocation mechanisms:
-
-- Priority-based allocation for critical chains
-- Dynamic adjustment based on chain activity levels
-- Reservation of minimum resources for each chain
-- Oversubscription with graceful degradation
-- Performance monitoring with automatic rebalancing
-
-## Future Directions
-
-Future developments may include:
-
-- Automated resource allocation based on chain importance
-- Cross-chain coordination mechanisms
-- Enhanced monitoring and management tools
-- Predictive scaling based on chain activity patterns
-- Adaptive load balancing between chains
-
-## Current Limitations
 
 The current implementation has some practical constraints:
 
@@ -106,6 +84,5 @@ The current implementation has some practical constraints:
 For more details on multi-chain support, refer to:
 
 - [Chain Identity System](/technical-architecture/chain-identity) - How chains are uniquely identified
-- [Chain ID API](/developer-resources/api/chain-id-api) - WebSocket API for chain management
-- [Protocol Buffer Definitions](/developer-resources/api/protobuf) - Message formats for chain operations
-- [L1 Contract Integration](/technical-architecture/l1-integration/registry-contract) - L1 registry contract 
+- [Chains API](/developer-resources/api/chains-api) - WebSocket API for chain management
+- [L1 Contract Integration](/technical-architecture/l1-integration/chain-registry) - L1 registry contract 

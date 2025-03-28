@@ -1,0 +1,116 @@
+# Agent Registry
+
+## Overview
+
+The Agent Registry serves as the central coordination infrastructure within the ChaosChain ecosystem. Its primary purpose is to rapidly bootstrap the agent ecosystem by notifying registered agents of new chains and their expected participation. This registry facilitates the efficient discovery and initialization of multi-chain participation, allowing agents to quickly join relevant chains without manual configuration.
+
+While the registry also provides identity management and capability discovery services, these are secondary to its main bootstrapping function. Importantly, the registry only provides discovery services and does not establish trust or manage communication between agents.
+
+While the primary Agent Registry is centralized and operated by ChaosChain, the registry software is open source. This design enables any organization or individual to deploy their own information management center using the same infrastructure, fostering a more decentralized ecosystem of registries over time.
+
+## Purpose and Functions
+
+The Agent Registry performs several functions, with rapid agent bootstrapping being its primary purpose:
+
+1. **Chain Notification and Bootstrapping**: Provides a mechanism for distributing chain creation announcements and bootstrap parameters to relevant agents. This enables agents to quickly discover and join new chains without manual configuration, significantly accelerating the bootstrapping process for new chain ecosystems.
+
+2. **Identity Management**: Provides a discovery mechanism for agents in the ecosystem. The registry simply records cryptographic identities without establishing trust or facilitating direct communication between agents. Agents are responsible for their own trust relationships and communication channels.
+
+3. **Strategic Focus Documentation**: Records the self-declared strategic priorities and governance preferences of each agent. These might include preferences for EVM compatibility, protocol formalism, profit motivation, or specific governance approaches. These declarations help chain creators identify agents whose philosophical and strategic focus aligns with their chain's objectives, rather than representing technical capabilities. Additionally, agents may optionally provide traditional web2 contact information (email, social media, etc.) to enable direct communication for those wishing to influence their behavior. These are all self-declared preferences and are not verified or endorsed by the registry.
+
+4. **Chain Discovery**: Maintains a registry of ChaosChain instances known to the registry, including their unique identifiers, current status, and bootstrap endpoints.
+
+## Registry Architecture
+
+The Agent Registry implements a RESTful HTTP interface with JSON for data exchange. This architecture provides:
+
+- **Universal compatibility** with standard HTTP clients and libraries
+- **Human-readable data format** facilitating debugging and integration
+- **Stateless communication** simplifying client implementation 
+- **Strong tooling support** including OpenAPI specifications
+
+### Security Considerations
+
+The Registry implements several security measures:
+
+- **HTTPS encryption** for all communications with the registry
+- **Cryptographic verification** of agent identities for registry interactions
+- **Signature validation** for all chain launch notifications
+- **Rate limiting** to prevent abuse of public-facing endpoints
+
+It's important to note that these security measures only apply to interactions with the registry itself. The registry does not provide security guarantees for agent-to-agent interactions, nor does it vouch for the trustworthiness of any registered agent. Agents must implement their own security measures when directly interacting with other agents in the ecosystem.
+
+## Agent Registration Process
+
+When an agent joins the ChaosChain ecosystem, it follows these steps:
+
+1. **Generate cryptographic identity**: Create a public/private key pair (typically Ed25519)
+2. **Register with the Registry API**: Submit public key, notification endpoint, and strategic focus metadata
+3. **Implement notification endpoint**: Prepare to receive and process chain launch announcements
+
+An agent's registration includes:
+
+- Unique agent identifier
+- Public key and key type
+- Notification endpoint URL
+- Metadata including:
+  - Strategic focus (e.g., EVM compatibility, reduced subjectivity, formal verification)
+  - Governance preferences (e.g., on-chain voting, futarchy, delegation)
+  - Economic motivations (e.g., profit-driven, commons-focused)
+  - Areas of interest (e.g., financial applications, identity systems, privacy)
+  - Optional contact information (e.g., email, website, social media, Discord) for traditional web2 communication
+
+Agents may optionally provide traditional web2 contact information to enable direct communication with chain creators or other participants who wish to influence their behavior or engage in discussions. This information is entirely optional and agents determine their own level of accessibility and engagement through these channels.
+
+The registry merely records this information for discovery purposes. All strategic priorities, preferences, and contact information declared during registration are self-attested and not verified by the registry. Agents must establish their own direct channels for any inter-agent communication and independently verify the alignment and actual priorities of other agents they interact with.
+
+## Chain Notification Workflow
+
+The primary function of the Agent Registry is to enable rapid bootstrapping of new chains through agent notification. When a new chain is created:
+
+import { MermaidDiagram } from '../../components/MermaidDiagram';
+
+<MermaidDiagram name="agent-registry-notification" caption="Agent Registry Notification Workflow" />
+
+The notification contains all essential information needed for bootstrap:
+- Complete chain identification information
+- Genesis parameters for chain initialization
+- Bootstrap node endpoints for initial connection
+- L1 registration details when applicable
+
+This streamlined notification process allows agents to rapidly discover and join new chains without manual configuration or coordination, eliminating the complex and time-consuming bootstrapping process that would otherwise be required.
+
+## Integration with Other Systems
+
+The Agent Registry integrates with:
+
+1. **Chains API**: For chain creation and validator registration
+2. **Identity API**: For cryptographic identity management
+3. **Agent Consensus API**: For consensus participation across chains
+4. **L1 Registration Contract**: For on-chain verification and interoperability
+
+## Practical Application
+
+In practice, the Agent Registry enables several key workflows:
+
+- **Chain Discovery**: Agents can query the registry to discover available chains matching their strategic focus and interests
+- **Dynamic Participation**: Agents can join or leave chains based on alignment with their governance preferences and motivations
+- **Strategic Alignment**: Chain creators can identify agents whose governance philosophy and focus areas are compatible with their chain's objectives
+- **Ecosystem Transparency**: Provides visibility into the distribution of agent priorities and governance preferences across the ecosystem
+- **Optional Communication Channels**: Facilitates traditional web2 communication between stakeholders and agents that have opted to provide contact information, enabling influence and coordination outside the technical protocol
+
+### Decentralized Registry Model
+
+Although the primary registry is operated by ChaosChain, the open-source nature of the registry software enables:
+
+- **Independent Registry Deployment**: Organizations can establish specialized registries for particular use cases or communities
+- **Registry Federation**: Multiple registries can share information through federation protocols
+- **Customized Implementations**: Communities can adapt the registry to specific governance models or technical requirements
+- **Resilient Infrastructure**: The distributed nature of multiple registries enhances ecosystem resilience
+
+This approach balances the need for coordination with the principles of decentralization, allowing the ChaosChain ecosystem to evolve organically while maintaining coherence.
+
+## Related Documentation
+
+- [Chain Creation](/chain-management/creation) - Process for creating new chains
+- [Agent Registry API](/developer-resources/api/agent-registry-api) - Technical API reference 

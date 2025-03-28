@@ -38,24 +38,21 @@ export default defineConfig({
         { text: 'Self-Evolving Chain', link: '/introduction/self-evolving-chain' },
       ]
     },
-    {
-      text: 'Governance Revolution',
-      items: [
-        { text: 'Overview', link: '/governance-revolution/' },
-        { text: 'Current Problems', link: '/governance-revolution/current-problems' },
-        { text: 'Agentic Governance', link: '/governance-revolution/agentic-governance' },
-        { text: 'Governance as Compute', link: '/governance-revolution/compute-game' },
-        { text: 'Proof of Humanity', link: '/governance-revolution/proof-of-humanity' },
-      ]
-    },
+
     {
       text: 'Technical Architecture',
       items: [
         { text: 'Overview', link: '/technical-architecture/' },
         { text: 'Node Architecture', link: '/technical-architecture/node' },
-        { text: 'L1 Contract', link: '/technical-architecture/l1-contract' },
-        { text: 'Identity Module', link: '/technical-architecture/identity' },
-        { text: 'Agent API', link: '/technical-architecture/api' },
+        { text: 'Chain Identity System', link: '/technical-architecture/chain-identity' },
+        { 
+          text: 'L1 Integration',
+          items: [
+            { text: 'Overview', link: '/technical-architecture/l1-integration/' },
+            { text: 'Chain Registry Contract', link: '/technical-architecture/l1-integration/chain-registry' },
+            { text: 'Bridge Contract', link: '/technical-architecture/l1-integration/bridge-contract' }
+          ]
+        },
         { 
           text: 'Node Modifications',
           items: [
@@ -63,8 +60,6 @@ export default defineConfig({
             { text: 'Block Proposal and Voting', link: '/technical-architecture/node-modifications/block-proposal' },
             { text: 'Horizontal Scalability', link: '/technical-architecture/node-modifications/horizontal-scalability' },
             { text: 'Identity Separation', link: '/technical-architecture/node-modifications/identity-separation' },
-            { text: 'API Surface', link: '/technical-architecture/node-modifications/api-surface' },
-            { text: 'Agent Wake', link: '/technical-architecture/node-modifications/agent-wake' },
             { text: 'Leader Election', link: '/technical-architecture/node-modifications/leader-election' },
             { text: 'Mempool Flexibility', link: '/technical-architecture/node-modifications/mempool-flexibility' },
           ]
@@ -76,9 +71,7 @@ export default defineConfig({
       items: [
         { text: 'Overview', link: '/chain-management/' },
         { text: 'Minimal Bootstrap Requirements', link: '/chain-management/bootstrap-requirements' },
-        { text: 'ChainSpec 0', link: '/chain-management/chainspec-0' },
         { text: 'Chain Creation', link: '/chain-management/creation' },
-        { text: 'Evolution Patterns', link: '/chain-management/evolution' },
       ]
     },
     {
@@ -86,7 +79,7 @@ export default defineConfig({
       items: [
         { text: 'Overview', link: '/agent-ecosystem/' },
         { text: 'Agent Registry', link: '/agent-ecosystem/registry' },
-        { text: 'Agent Types', link: '/agent-ecosystem/types' },
+        { text: 'Agent Development', link: '/agent-ecosystem/development' },
         { text: 'Compute Strategies', link: '/agent-ecosystem/compute' },
         { text: 'Security Considerations', link: '/agent-ecosystem/security' },
       ]
@@ -95,6 +88,16 @@ export default defineConfig({
       text: 'Academic Research',
       items: [
         { text: 'Overview', link: '/academic-research/' },
+        {
+          text: 'Governance Revolution',
+          items: [
+            { text: 'Overview', link: '/governance-revolution/' },
+            { text: 'Current Problems', link: '/governance-revolution/current-problems' },
+            { text: 'Agentic Governance', link: '/governance-revolution/agentic-governance' },
+            { text: 'Governance as Compute', link: '/governance-revolution/compute-game' },
+            { text: 'Proof of Humanity', link: '/governance-revolution/proof-of-humanity' },
+          ]
+        },
         { text: 'Compute Wars Thesis', link: '/academic-research/compute-wars' },
         { text: 'Security Research', link: '/academic-research/security' },
         { text: 'Societal Implications', link: '/academic-research/societal' },
@@ -111,11 +114,12 @@ export default defineConfig({
         { text: 'Overview', link: '/developer-resources/' },
         { text: 'Node Operation', link: '/developer-resources/node' },
         { text: 'Agent Development', link: '/developer-resources/agent' },
-        { text: 'Chain Creation', link: '/developer-resources/chain' },
+        { text: 'Chain Creation', link: '/chain-management/creation' },
         { 
           text: 'API Reference', 
           items: [
             { text: 'Common API Details', link: '/developer-resources/api/common-api-details' },
+            { text: 'Agent Registry API', link: '/developer-resources/api/agent-registry-api' },
             { text: 'Identity API', link: '/developer-resources/api/identity-api' },
             { text: 'Chains API', link: '/developer-resources/api/chains-api' },
             { text: 'Agent Consensus API', link: '/developer-resources/api/agent-consensus-api' }

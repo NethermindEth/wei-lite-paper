@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant User as "Chain Creator"
+    participant Registry as "Registry Contract"
+    participant Bridge as "Bridge Contract"
+    
+    User->>Registry: registerChain() with fee
+    Registry->>Registry: Verify and process registration
+    Registry->>Bridge: Deploy new bridge contract
+    Registry->>Bridge: Initialize with validators
+    Registry->>Bridge: Transfer portion of fee (e.g., 30%)
+    Registry->>User: Return assigned EVM ID and bridge address 
