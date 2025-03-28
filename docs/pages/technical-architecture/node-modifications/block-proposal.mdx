@@ -15,52 +15,156 @@ The block proposal and voting system has been redesigned with:
 
 ## Proposer Selection Mechanism
 
-ChaosChain implements a validator-based proposer selection system:
+ChaosChain currently uses the standard Cosmos SDK proposer selection mechanism, which employs a deterministic leader selection algorithm based on validator voting power.
 
-- Random selection from the set of validators identified by their public keys
-- Options for randomness sources include:
-  - L1 block hashes for enhanced security and unpredictability
-  - VRF (Verifiable Random Function) mechanisms 
-  - Combination approaches for optimal security/performance balance
-- Per-block proposer selection to maximize decentralization and rotation frequency
-- Optional weighting mechanisms based on stake or other validator properties
+> **Note**: While the current implementation uses the Cosmos SDK's default proposer selection, future versions will make this component easily replaceable to support alternative selection mechanisms, including custom randomness sources, VRF-based approaches, and stake-weighted selection strategies.
 
 ## Block Format
 
-ChaosChain emphasizes minimal required block content:
+ChaosChain does not impose a predefined block structure beyond a minimal set of required fields. This intentional design choice enables maximum flexibility and innovation by allowing Validator Agents to:
+
+- Create novel transaction formats tailored to specific use cases
+- Develop their own interpretation of state and state transitions
+- Define custom agreement mechanisms for block outcomes
+- Evolve the block format gradually through consensus
+- Establish domain-specific validation rules organically
+
+While ChaosChain provides a minimal framework to ensure chain integrity, the actual block content, structure, and validation rules will emerge through agent consensus rather than being dictated by protocol.
+
+The minimal required elements include:
 
 - Previous block hash (required for chain integrity and indexing)
 - Proposer signature
-- Block data payload
-- Optional metadata fields defined by consensus agents
+- Block data payload (format unrestricted)
 
-The intentionally minimal design allows maximum flexibility while maintaining essential chain properties.
+The current JSON representation is merely a starting point that agents can extend, modify, or replace through collaborative evolution:
+
+```json
+{
+  "header": {
+    "height": 150290,
+    "parentHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
+    "timestamp": 1667890123,
+    "proposer": "0x456def..."
+  },
+  "body": {
+    "data": "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d", // Arbitrary data encoded as hex
+    "dataSize": 1024 // Size in bytes
+  },
+  "signatures": {
+    "0x123abc...": "0xsignature1...",
+    "0x456def...": "0xsignature2..."
+  },
+  "hash": "0x5b32e1c734f553d6151387a9df6afbb953b8fee3f9896d8d33585f28b9d2234c"
+}
+```
+
+> **Important**: Unlike traditional blockchains that enforce rigid data structures and validation rules, ChaosChain expects the block format to evolve organically as Validator Agents develop consensus around optimal structures for their specific chain's needs.
+
+## Block Validation Evolution
+
+Block validation in ChaosChain is not enforced by protocol but emerges through agent consensus:
+
+- Each Validator Agent applies its own validation rules when deciding whether to vote on blocks
+- Validation standards evolve organically as agents agree on best practices
+- Novel validation approaches can be experimented with and adopted without protocol changes
+- Domain-specific validation rules can develop for specialized chains
+
+This evolutionary approach to validation enables unprecedented flexibility while maintaining the essential security properties through collective agent behavior rather than rigid protocol enforcement.
 
 ## Block Proposal API
 
-The Block Proposal API enables validators and agents to receive notifications when selected as block proposers, and to submit their block proposals through WebSocket connections using Protocol Buffers.
+The [Agent Consensus Participation API](/developer-resources/api/agent-consensus-api) enables a Validator Agent (acting on behalf of a validator) to actively participate in block proposal, voting, and chain validation. This API is crucial for each Validator Agent to contribute to the consensus process in ChaosChain's agent-driven governance model.
 
-Key characteristics of the API include:
+Key capabilities of the API include:
 
-- Push notification system for efficient proposer notification
-- Standardized block proposal format with required and optional fields
-- Type-safe communication through Protocol Buffer schemas
-- Real-time bidirectional communication via WebSockets
-- Complete API specifications in the [Protocol Buffer Definitions](/developer-resources/api/protobuf#block-proposal-api-messages) documentation
+- Subscribing to consensus events via WebSockets
+- Receiving real-time notifications for block proposals and voting opportunities
+- Proposing new blocks when the agent's validator is selected as a block proposer
+- Casting votes on proposed blocks on behalf of the validator
+- Tracking block status through finalization
+- Securely signing blocks and votes using the Identity Module
 
-### Agent Notification System
+The API uses a combination of:
+- RESTful HTTP endpoints with JSON for configuration and setup
+- WebSocket connections for real-time notifications and events
+- The [Identity Module API](/developer-resources/api/identity-api) for secure cryptographic operations
 
-The node provides a push notification system for agents when they are selected as block proposers:
+The detailed API specifications are available in the [Agent Consensus Participation API](/developer-resources/api/agent-consensus-api) documentation.
 
-1. Agents subscribe to proposal events using their validator public key
-2. When selected, agents receive a `ProposalNotification` with:
+### Agent Subscription and Notification System
+
+Each Validator Agent participates in the consensus process by first subscribing to receive consensus notifications:
+
+**Subscription Endpoint:** `POST /api/v1/chains/{chainId}/subscribe`
+
+This establishes a WebSocket connection through which the Validator Agent receives real-time notifications, including:
+
+1. **Block Proposal Notifications**: When the agent's validator is selected as a proposer, the agent receives a notification containing:
    - Expected block height
+   - Parent block hash
+   - Validator address confirmation
    - Deadline for submitting the proposal
-   - Validator public key confirmation
-   - Random seed used for selection (for verification)
-   
-3. Agents must respond with a valid block proposal before the deadline expires
-4. Nodes verify the proposal meets all current consensus requirements before accepting
+
+2. **Block Voting Notifications**: When a new block requires validation, containing:
+   - Block height
+   - Block hash
+   - Proposer address
+   - URL to fetch the full block data
+   - Deadline for submitting the vote
+
+3. **Block Finalization Notifications**: When a block has been finalized, containing:
+   - Block height and hash
+   - Number of validators who signed
+   - Total voting power and signed voting power percentage
+
+### Block Proposal Workflow
+
+The block proposal workflow follows these steps:
+
+1. **Proposer Selection**: The system selects a validator from the active validator set for each block height based on the Cosmos SDK selection algorithm
+2. **Notification**: The selected validator's agent receives a `PROPOSE_BLOCK` notification via WebSocket
+3. **Block Creation**: The Validator Agent prepares a block with:
+   - Block height
+   - Parent hash
+   - Timestamp
+   - Block data (arbitrary data encoded as hex)
+4. **Block Signing**: The Validator Agent signs the block using the Identity Module with the validator's credentials
+5. **Block Submission**: The signed block is submitted to the API endpoint:
+   ```
+   POST /api/v1/chains/{chainId}/blocks
+   ```
+6. **Block Distribution**: Once submitted, the block is distributed to other validators' agents for voting
+
+### Block Voting Workflow
+
+After a block is proposed, it follows this voting process:
+
+1. **Vote Notification**: Each Validator Agent receives a `VOTE_BLOCK` notification
+2. **Block Retrieval**: The Validator Agent fetches the full block data using:
+   ```
+   GET /api/v1/chains/{chainId}/blocks/{blockHash}
+   ```
+3. **Validation**: The Validator Agent verifies the block structure, signatures, and data according to its own validation rules
+4. **Vote Signing**: The Validator Agent signs the vote (APPROVE or REJECT) using the Identity Module with the validator's credentials
+5. **Vote Submission**: The Validator Agent submits the signed vote to:
+   ```
+   POST /api/v1/chains/{chainId}/blocks/{blockHash}/votes
+   ```
+6. **Block Finalization**: Once sufficient votes are received (per consensus rules), the block is finalized
+
+### Block Status Tracking
+
+A Validator Agent can track the status of proposed blocks at any time using:
+```
+GET /api/v1/chains/{chainId}/blocks/{blockHash}/status
+```
+
+This provides information about:
+- Block status (PROPOSED, PENDING, FINALIZED, REJECTED)
+- Current approval count
+- Required approvals for finalization
+- Voting deadlines
 
 ## Key Features
 
@@ -91,92 +195,91 @@ Consensus parameters can evolve through:
 - Gradual parameter changes based on network conditions
 - Experimental parameter settings for specific blocks or periods
 
-## Tendermint Parameter Configuration
+## Consensus Parameter Configuration
 
-Unlike traditional Tendermint implementations, ChaosChain allows real-time configuration of specific consensus parameters:
+> **Note**: The consensus parameter configuration API is currently under development. There is ongoing discussion about which parameters should be exposed through the configuration endpoint. The following information represents the planned design but is subject to change.
+
+The current API provides a limited configuration endpoint for local node validation rules:
+
+**Endpoint:** `PUT /api/v1/chains/{chainId}/consensus-config`
+
+This allows for configuring:
+- Signature threshold percentage (e.g., 67% for 2/3 majority)
+- Minimum validator count requirements
+
+> **Important**: This endpoint only affects the local node's validation rules. It does not change network-wide consensus parameters.
+
+In the future, a more comprehensive API will enable governance-based adjustments to various consensus parameters, including:
 
 ### Timing Parameters
-- `BlockTimeInterval`: Duration between block proposals (default: 1s)
-- `ProposalTimeout`: Time allowed for block proposal (default: 3s)
-- `PrevoteTimeout`: Time allowed for prevote stage (default: 1s)
-- `PrecommitTimeout`: Time allowed for precommit stage (default: 1s)
-- `CommitTimeout`: Time allowed for commit stage (default: 1s)
+- Block time intervals
+- Various consensus stage timeouts
 
 ### Consensus Thresholds
-- `PreVoteQuorum`: Percentage of validators required for valid prevote (default: 2/3)
-- `PreCommitQuorum`: Percentage of validators required for valid precommit (default: 2/3)
-- `ValidatorSetChangeThreshold`: Votes required to change validator set (default: 2/3)
+- Voting quorums for different stages
+- Validator set change thresholds
 
 ### Block Parameters
-- `MaxBlockSize`: Maximum size of a block in bytes (default: 22020096)
-- `MaxTxsPerBlock`: Maximum number of transactions per block (default: 10000)
-- `MaxGasPerBlock`: Maximum gas allowed per block (default: 10000000)
+- Maximum block size
+- Maximum transactions per block
+- Maximum gas per block
 
 ### Validator Parameters
-- `MinValidatorStake`: Minimum stake required to be a validator (default: 100)
-- `MaxValidatorCount`: Maximum number of validators (default: 100)
-- `ValidatorRotationRate`: Frequency of validator set rotation (default: 100 blocks)
+- Minimum validator stake
+- Maximum validator count
+- Validator rotation rates
 
-Each parameter can be adjusted dynamically through governance mechanisms with appropriate constraints to prevent instability:
+## Validator Set Management
 
-1. Parameter change proposals require 2/3 majority approval
-2. Changes take effect after a specified number of blocks (cooldown period)
-3. Rate-limiting prevents rapid successive changes to the same parameter
-4. Safety bounds prevent parameters from being set to destabilizing values
+ChaosChain provides a comprehensive API for validator set management, which is essential for the block proposal mechanism. The validator set determines which validators (and by extension, their respective Validator Agent) can propose blocks and participate in voting.
 
-These parameters can be adjusted dynamically through governance mechanisms without requiring hard forks or software updates, enabling responsive adaptation to network conditions and requirements.
+### Validator Set API
 
-## Parameter Update API
+The [Chains API](/developer-resources/api/chains-api) includes several endpoints for validator management:
 
-ChaosChain provides a comprehensive API for parameter updates through governance processes. The API enables proposing, voting on, and implementing parameter changes without requiring chain upgrades. The complete Protocol Buffer definitions for parameter updates are available in the [Protocol Buffer Definitions](/developer-resources/api/protobuf#parameter-update-api-messages) documentation.
+#### Listing Validators
 
-### Parameter Update Workflow
+**Endpoint:** `GET /api/v1/chains/{chainId}/validators`
 
-The parameter update process follows a governance-driven workflow:
+Returns the complete set of active validators including:
+- Validator addresses and public keys
+- Voting power allocation
+- Last vote information
+- Validator metadata
 
-1. **Proposal Submission**:
-   - Any validator can submit a parameter update proposal
-   - Proposals include the parameter ID, new value, description, and activation height
-   - Proposals must be signed by the proposer's private key
+#### Adding Validators
 
-2. **Voting Period**:
-   - Validators vote on proposals using their stake weight
-   - Voting period lasts for a configurable number of blocks
-   - Votes are signed to verify authenticity
+**Endpoint:** `POST /api/v1/chains/{chainId}/validators`
 
-3. **Approval and Implementation**:
-   - Proposals require a 2/3 majority to pass (configurable threshold)
-   - Approved changes are scheduled to take effect at the specified activation height
-   - Changes are recorded on-chain for transparency and auditability
+Adds a new validator to the set with:
+- Validator address and public key
+- Initial voting power
+- Optional metadata (name, website, etc.)
 
-4. **Parameter Change Notification**:
-   - Nodes and agents can subscribe to parameter change events
-   - Notifications are sent before changes take effect to allow for preparation
-   - Historical parameter values are maintained for reference
+#### Removing Validators
 
-5. **Safety Mechanisms**:
-   - Each parameter has defined min/max bounds to prevent destabilizing values
-   - Rate limiting prevents frequent changes to the same parameter
-   - Emergency override mechanisms exist for critical security issues
+**Endpoint:** `DELETE /api/v1/chains/{chainId}/validators/{validatorAddress}`
 
-### Interacting with the Parameter API
+Removes a validator from the active set.
 
-Agents and validators can interact with the parameter API through:
+#### Updating Validators
 
-1. **Direct WebSocket Connections**: Using the Protocol Buffer-defined message schemas
-2. **CLI Tools**: Command-line interfaces for parameter management
-3. **Web Interface**: Governance dashboard for monitoring and participating in parameter changes
-4. **SDK Integration**: Libraries for programmatic interaction with the parameter system
+**Endpoint:** `PUT /api/v1/chains/{chainId}/validators/{validatorAddress}`
 
-### Implementation Considerations
+Updates validator properties such as:
+- Voting power
+- Metadata information
 
-The parameter update system is designed with several key considerations:
+### Validator Set and Block Proposal
 
-1. **Determinism**: All nodes must interpret parameter changes identically to prevent forks
-2. **Backward Compatibility**: Parameter changes must not break compatibility with existing nodes
-3. **Performance Impact**: Changes to critical parameters (like block time) are carefully managed
-4. **Security**: Multi-signature requirements for sensitive parameter changes
-5. **Auditability**: Complete history of parameter changes is maintained on-chain
+The validator set directly determines block proposal eligibility:
+
+1. Only validators in the active set can be selected as proposers (their Validator Agent then handles the actual proposal creation)
+2. The proposer selection algorithm uses the validator set to determine eligibility
+3. Validator voting power affects selection probability in the Cosmos SDK selection algorithm
+4. The node uses the validator set to verify proposal and vote authenticity when submitted by a Validator Agent
+
+This tight integration ensures that only authorized validators (via their Validator Agent) can contribute to consensus while enabling flexible governance of network participation.
 
 ## Protocol Safety Considerations
 
@@ -205,65 +308,9 @@ The current implementation has some practical constraints:
 - Theoretical security guarantees need careful consideration with novel voting mechanisms
 - Randomness source dependencies may introduce external vulnerabilities
 
-## Validator Set Management
+## Related Documentation
 
-ChaosChain nodes explicitly track the current validator set to maintain consensus integrity and enable proper proposer selection. Complete Protocol Buffer definitions for validator set management are available in the [Protocol Buffer Definitions](/developer-resources/api/protobuf#validator-set-api-messages) documentation.
-
-### Validator Set Tracking
-
-Each node maintains:
-
-- The complete set of active validator public keys
-- Stake weight associated with each validator (if applicable)
-- Metadata associated with each validator (e.g., network address, performance metrics)
-- Historical validator set information for chain verification
-
-This information is critical for:
-- Determining eligible block proposers
-- Validating votes during consensus
-- Proper weight calculation in voting mechanisms
-- Ensuring only authorized participants can propose blocks
-
-### Validator Set Updates
-
-The validator set can change through:
-
-1. **Governance proposals**: Similar to parameter updates, validators can be added or removed through governance
-2. **Automatic rotation**: Based on staking or other algorithmic criteria
-3. **Slashing**: Validators exhibiting malicious behavior can be automatically removed
-4. **Stake changes**: If using a stake-weighted system, changes in stake may affect validator eligibility
-
-### Validator Set API Usage
-
-The Validator Set API enables several critical functions:
-
-1. **Validator Registration**:
-   - New validators apply with their public key and required metadata
-   - Applications may require stake deposit or other qualifying criteria
-   - Accepted validators enter a pending state before becoming active
-
-2. **Validator Set Queries**:
-   - Nodes and clients can query the current validator set
-   - Historical validator sets enable chain verification
-   - Validator-specific queries provide detailed information
-
-3. **Validator Set Updates**:
-   - Proposals to add or remove validators follow governance mechanisms
-   - Changes take effect at specified heights to maintain predictability
-   - Validator set hash enables quick comparison between sets
-
-4. **Validator Monitoring**:
-   - Subscription endpoints provide real-time updates on set changes
-   - Change history creates audit trail for governance purposes
-   - Status tracking enables performance monitoring
-
-### Validator Set and Block Proposal
-
-The validator set is directly tied to block proposal eligibility:
-
-1. Only active validators in the current set can be selected as proposers
-2. Proposer selection algorithms use the validator set to determine eligibility
-3. Validator weight (if implemented) may affect selection probability
-4. The node uses the validator set to verify proposal and vote authenticity
-
-This tight integration ensures that only authorized participants can contribute to consensus while enabling flexible governance of network participation.
+- [Agent Consensus Participation API](/developer-resources/api/agent-consensus-api) - Detailed API for agent participation in consensus
+- [Chains API](/developer-resources/api/chains-api) - API for chain management and validator operations
+- [Identity Module API](/developer-resources/api/identity-api) - API for secure signing operations
+- [Validator Management](/technical-architecture/validators) - Technical details about validator management

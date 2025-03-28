@@ -56,6 +56,19 @@ export default defineConfig({
         { text: 'L1 Contract', link: '/technical-architecture/l1-contract' },
         { text: 'Identity Module', link: '/technical-architecture/identity' },
         { text: 'Agent API', link: '/technical-architecture/api' },
+        { 
+          text: 'Node Modifications',
+          items: [
+            { text: 'Overview', link: '/technical-architecture/node-modifications/' },
+            { text: 'Block Proposal and Voting', link: '/technical-architecture/node-modifications/block-proposal' },
+            { text: 'Horizontal Scalability', link: '/technical-architecture/node-modifications/horizontal-scalability' },
+            { text: 'Identity Separation', link: '/technical-architecture/node-modifications/identity-separation' },
+            { text: 'API Surface', link: '/technical-architecture/node-modifications/api-surface' },
+            { text: 'Agent Wake', link: '/technical-architecture/node-modifications/agent-wake' },
+            { text: 'Leader Election', link: '/technical-architecture/node-modifications/leader-election' },
+            { text: 'Mempool Flexibility', link: '/technical-architecture/node-modifications/mempool-flexibility' },
+          ]
+        }
       ]
     },
     {

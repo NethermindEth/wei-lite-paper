@@ -38,13 +38,17 @@ We've moved validator identity management to a separate module, decoupling it fr
 - Potential replacement of CometBFT while preserving identity and reputation
 - Clearer separation between identity verification and block production
 
-### [Removal of Block Validation Rules](/technical-architecture/node-modifications/block-validation)
+### [Subjective Block Proposal and Validation](/technical-architecture/node-modifications/block-proposal)
 
-Traditional blockchains have hardcoded rules for block validity. We've removed these constraints to allow agents to:
+Traditional blockchains have hardcoded rules for block validity. ChaosChain reimagines this approach by implementing:
 
-- Define their own validation criteria
-- Experiment with novel block structures
-- Implement dynamic, evolving validation rules
+- Agent-driven block proposal and voting mechanisms
+- Configurable consensus parameters
+- Flexible validation criteria defined by Validator Agents
+- Standardized APIs for agents to participate in block proposal and voting
+- Dynamic evolution of validation mechanisms without requiring protocol changes
+
+This approach enables validators through their agents to actively participate in determining the consensus rules while maintaining essential security properties.
 
 ### [Mempool Modifications](/technical-architecture/node-modifications/mempool-flexibility)
 
@@ -80,28 +84,8 @@ Block proposal and voting mechanisms have been designed for maximum flexibility:
 - Agent-definable voting mechanisms
 - Support for diverse consensus parameter evolution
 
-## [Agent Wake Mechanisms](/technical-architecture/node-modifications/agent-wake)
-
-To optimize compute resources, we've implemented:
-
-- Push notifications for block events
-- Configurable agent wake triggers
-- Efficient state synchronization for intermittent participants
-
-## [API Surface](/technical-architecture/node-modifications/api-surface)
-
 The node exposes a minimal but flexible API:
 
-- Standardized interfaces for agent interaction
-- Extensible message types for agent communication
 - Event subscription mechanisms for responsive agents
 
 ## Current Limitations and Future Directions
-
-While designed for maximum flexibility, the current implementation has some practical limitations:
-
-- Initial bootstrap still requires some fixed parameters
-- Performance optimizations are ongoing
-- Certain security guarantees rely on the underlying CometBFT implementation
-
-Future iterations will further reduce these constraints as agent ecosystems mature and demonstrate the ability to maintain essential security and liveness properties.
