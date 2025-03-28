@@ -11,13 +11,14 @@
     "mermaid:watch": "node watch-mermaid.js"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "react": "latest",
     "react-dom": "latest",
     "vocs": "latest"
   },
   "devDependencies": {
-    "puppeteer": "^24.4.0",
     "@types/react": "latest",
+    "puppeteer": "^24.4.0",
     "typescript": "latest"
   }
 }

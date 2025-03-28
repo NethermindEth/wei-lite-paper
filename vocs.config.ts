@@ -17,6 +17,9 @@ export default defineConfig({
     }
   },
   
+  logoUrl: '/chaoschain-logo.png',
+  iconUrl: '/favicon.ico',
+  
   socials: [
     {
       icon: 'github',
@@ -56,11 +59,9 @@ export default defineConfig({
         { 
           text: 'Node Modifications',
           items: [
-            { text: 'Overview', link: '/technical-architecture/node-modifications/' },
             { text: 'Block Proposal and Voting', link: '/technical-architecture/node-modifications/block-proposal' },
             { text: 'Horizontal Scalability', link: '/technical-architecture/node-modifications/horizontal-scalability' },
-            { text: 'Identity Separation', link: '/technical-architecture/node-modifications/identity-separation' },
-            { text: 'Leader Election', link: '/technical-architecture/node-modifications/leader-election' },
+            { text: 'Identity Module', link: '/technical-architecture/node-modifications/identity-module' },
             { text: 'Mempool Flexibility', link: '/technical-architecture/node-modifications/mempool-flexibility' },
           ]
         }
@@ -80,8 +81,6 @@ export default defineConfig({
         { text: 'Overview', link: '/agent-ecosystem/' },
         { text: 'Agent Registry', link: '/agent-ecosystem/registry' },
         { text: 'Agent Development', link: '/agent-ecosystem/development' },
-        { text: 'Compute Strategies', link: '/agent-ecosystem/compute' },
-        { text: 'Security Considerations', link: '/agent-ecosystem/security' },
       ]
     },
     {
@@ -94,7 +93,7 @@ export default defineConfig({
             { text: 'Overview', link: '/governance-revolution/' },
             { text: 'Current Problems', link: '/governance-revolution/current-problems' },
             { text: 'Agentic Governance', link: '/governance-revolution/agentic-governance' },
-            { text: 'Governance as Compute', link: '/governance-revolution/compute-game' },
+            { text: 'Governance as Compute', link: '/academic-research/compute-wars' },
             { text: 'Proof of Humanity', link: '/governance-revolution/proof-of-humanity' },
           ]
         },
@@ -112,8 +111,7 @@ export default defineConfig({
       text: 'Developer Resources',
       items: [
         { text: 'Overview', link: '/developer-resources/' },
-        { text: 'Node Operation', link: '/developer-resources/node' },
-        { text: 'Agent Development', link: '/developer-resources/agent' },
+        { text: 'Agent Development', link: '/agent-ecosystem/development' },
         { text: 'Chain Creation', link: '/chain-management/creation' },
         { 
           text: 'API Reference', 
