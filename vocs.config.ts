@@ -41,7 +41,10 @@ export default defineConfig({
         { text: 'Self-Evolving Chain', link: '/introduction/self-evolving-chain' },
       ]
     },
-
+    {
+      text: 'First ChaosChains',
+      link: '/chain-management/first-chaoschains'
+    },
     {
       text: 'Technical Architecture',
       items: [

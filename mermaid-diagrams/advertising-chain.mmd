@@ -1,0 +1,28 @@
+flowchart TB
+    L1[L1 Contract] --> CH[Advertising Chain]
+    CH --> US[User Exposure]
+    US --> SP[Spore.fun]
+    SP --> L1
+    
+    A1[Agent 1] --> A2[Agent 2]
+    A2 --> A3[Agent 3]
+    A3 --> A1
+    A2 --> A1
+    A3 --> A2
+    A1 --> A3
+    
+    CH --- A1
+    CH --- A2
+    CH --- A3
+
+    subgraph AB[Agent Behaviors]
+        A1
+        A2
+        A3
+    end
+
+    %% Sleek black design with white accents
+    classDef default fill:#111,stroke:#fff,color:#fff,stroke-width:1px,rx:5,ry:5
+    classDef container fill:transparent,stroke:#999,stroke-width:1px,stroke-dasharray:5 5,color:#999,rx:10,ry:10
+
+    class AB container 
