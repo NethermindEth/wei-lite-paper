@@ -53,7 +53,7 @@ Generates a new key pair for the agent, with the private key securely stored in 
   "success": true,
   "data": {
     "keyId": "key-abc123",
-    "publicKey": "base64-encoded-public-key",
+    "publicKey": "base64:mO9xGz5GoIQXRNQkJUnvrUWvP+QHniGcTlhCMuWyDBI=",
     "keyType": "ed25519"
   },
   "error": null,
@@ -65,13 +65,15 @@ Generates a new key pair for the agent, with the private key securely stored in 
 
 Generates a new key pair and sets it as the agent's primary key, while recording the previous key in the historical key registry.
 
-**Endpoint:** `POST /api/v1/identity/keys/rotate`
+**Endpoint:** `POST /api/v1/identity/keys/{keyId}/rotations`
+
+**Parameters:**
+- `keyId`: The ID of the key to rotate
 
 **Request:**
 ```json
 {
   "keyType": "ed25519",
-  "currentKeyId": "key-abc123",
   "metadata": {
     "role": "validator",
     "environment": "production"
@@ -86,7 +88,7 @@ Generates a new key pair and sets it as the agent's primary key, while recording
   "success": true,
   "data": {
     "newKeyId": "key-def456",
-    "newPublicKey": "base64-encoded-public-key",
+    "newPublicKey": "base64:7Pxj3wUMrxmFZ4JT9PJMpQrwA0YAkZhL3+udM89RQ8A=",
     "previousKeyId": "key-abc123",
     "rotationTimestamp": 1634567890
   },
@@ -105,7 +107,7 @@ Registers an external public key in the local registry for later use in signatur
 ```json
 {
   "keyId": "external-key-123",
-  "publicKey": "base64-encoded-public-key",
+  "publicKey": "base64:iDYWxwaM9rA/NJ6QiR4MBuZ6l/l1v0hP6P1cspnTxiI=",
   "keyType": "ed25519",
   "metadata": {
     "owner": "validator-xyz",
@@ -128,14 +130,17 @@ Registers an external public key in the local registry for later use in signatur
 
 #### Get Public Key
 
-Retrieves a public key by ID or owner.
+Retrieves a public key by ID.
 
 **Endpoint:** `GET /api/v1/identity/keys/{keyId}`
 
 **Parameters:**
 - `keyId`: The ID of the key to retrieve
 
-**Alternative:** `GET /api/v1/identity/keys/owner/{ownerId}`
+**Alternative:** `GET /api/v1/identity/keys?ownerId={ownerId}`
+
+**Parameters:**
+- `ownerId`: The ID of the key owner
 
 **Response:**
 ```json
@@ -143,7 +148,7 @@ Retrieves a public key by ID or owner.
   "success": true,
   "data": {
     "keyId": "key-abc123",
-    "publicKey": "base64-encoded-public-key",
+    "publicKey": "base64:mO9xGz5GoIQXRNQkJUnvrUWvP+QHniGcTlhCMuWyDBI=",
     "keyType": "ed25519",
     "metadata": {
       "role": "validator",
@@ -176,7 +181,7 @@ Retrieves historical public keys for the requesting agent.
     "keys": [
       {
         "keyId": "key-abc123",
-        "publicKey": "base64-encoded-public-key",
+        "publicKey": "base64:mO9xGz5GoIQXRNQkJUnvrUWvP+QHniGcTlhCMuWyDBI=",
         "keyType": "ed25519",
         "metadata": {
           "role": "validator"
@@ -187,7 +192,7 @@ Retrieves historical public keys for the requesting agent.
       },
       {
         "keyId": "key-def456",
-        "publicKey": "base64-encoded-public-key",
+        "publicKey": "base64:7Pxj3wUMrxmFZ4JT9PJMpQrwA0YAkZhL3+udM89RQ8A=",
         "keyType": "ed25519",
         "metadata": {
           "role": "validator"
@@ -228,7 +233,7 @@ Lists all stored public keys with optional filtering.
     "keys": [
       {
         "keyId": "key-abc123",
-        "publicKey": "base64-encoded-public-key",
+        "publicKey": "base64:mO9xGz5GoIQXRNQkJUnvrUWvP+QHniGcTlhCMuWyDBI=",
         "keyType": "ed25519",
         "metadata": {
           "role": "validator",
@@ -239,7 +244,7 @@ Lists all stored public keys with optional filtering.
       },
       {
         "keyId": "external-key-123",
-        "publicKey": "base64-encoded-public-key",
+        "publicKey": "base64:iDYWxwaM9rA/NJ6QiR4MBuZ6l/l1v0hP6P1cspnTxiI=",
         "keyType": "ed25519",
         "metadata": {
           "owner": "validator-xyz",
@@ -273,7 +278,7 @@ For raw message signing:
 **Request:**
 ```json
 {
-  "message": "base64-encoded-message",
+  "message": "base64:aGVsbG8gd29ybGQ=",
   "keyId": "key-abc123",
   "signatureScheme": "eddsa"
 }
@@ -302,7 +307,7 @@ For direct object signing:
 {
   "success": true,
   "data": {
-    "signature": "base64-encoded-signature"
+    "signature": "base64:iCrQY6aohGzdmx3zw1WiQGu47YIwn0Yx+0VOKQSVxuJLv8IQl8x4FkHSv+dVKGSJeSCxwmZQmqQCJuCbD6qxAQ=="
   },
   "error": null,
   "requestId": "req-123456789"
@@ -325,14 +330,14 @@ When using the `object` parameter, the Identity API automatically handles serial
 
 Verifies a signature against a message and public key.
 
-**Endpoint:** `POST /api/v1/identity/signatures/verify`
+**Endpoint:** `POST /api/v1/identity/signatures/verifications`
 
 **Request:**
 ```json
 {
-  "message": "base64-encoded-message",
-  "signature": "base64-encoded-signature",
-  "publicKey": "base64-encoded-public-key",
+  "message": "base64:aGVsbG8gd29ybGQ=",
+  "signature": "base64:iCrQY6aohGzdmx3zw1WiQGu47YIwn0Yx+0VOKQSVxuJLv8IQl8x4FkHSv+dVKGSJeSCxwmZQmqQCJuCbD6qxAQ==",
+  "publicKey": "base64:mO9xGz5GoIQXRNQkJUnvrUWvP+QHniGcTlhCMuWyDBI=",
   "signatureScheme": "eddsa"
 }
 ```
@@ -340,8 +345,8 @@ Verifies a signature against a message and public key.
 Alternative using key ID:
 ```json
 {
-  "message": "base64-encoded-message",
-  "signature": "base64-encoded-signature",
+  "message": "base64:aGVsbG8gd29ybGQ=",
+  "signature": "base64:iCrQY6aohGzdmx3zw1WiQGu47YIwn0Yx+0VOKQSVxuJLv8IQl8x4FkHSv+dVKGSJeSCxwmZQmqQCJuCbD6qxAQ==",
   "keyId": "key-abc123",
   "signatureScheme": "eddsa"
 }
@@ -363,22 +368,22 @@ Alternative using key ID:
 
 Verifies an aggregated BLS signature against multiple messages and public keys.
 
-**Endpoint:** `POST /api/v1/identity/signatures/verify-aggregated`
+**Endpoint:** `POST /api/v1/identity/signatures/aggregated-verifications`
 
 **Request:**
 ```json
 {
   "messages": [
-    "base64-encoded-message-1",
-    "base64-encoded-message-2",
-    "base64-encoded-message-3"
+    "base64:bWVzc2FnZTE=",
+    "base64:bWVzc2FnZTI=",
+    "base64:bWVzc2FnZTM="
   ],
   "publicKeys": [
-    "base64-encoded-public-key-1",
-    "base64-encoded-public-key-2",
-    "base64-encoded-public-key-3"
+    "base64:mO9xGz5GoIQXRNQkJUnvrUWvP+QHniGcTlhCMuWyDBI=",
+    "base64:7Pxj3wUMrxmFZ4JT9PJMpQrwA0YAkZhL3+udM89RQ8A=",
+    "base64:iDYWxwaM9rA/NJ6QiR4MBuZ6l/l1v0hP6P1cspnTxiI="
   ],
-  "aggregatedSignature": "base64-encoded-aggregated-signature"
+  "aggregatedSignature": "base64:pnQ2L0PYxfJlC/uX3OW1m9fBEQNL14O0zlLOQbzO8P5gYmVOCj0ORp57w1dR4tQtbLQB68IWu1JKGiVZ3Wc1BoOPnI2sgHFqB5Q0nA6alwRIfuKFyYv3YrVYC6VBfHkn"
 }
 ```
 
@@ -393,3 +398,39 @@ Verifies an aggregated BLS signature against multiple messages and public keys.
   "requestId": "req-123456789"
 }
 ```
+
+## Error Codes
+
+This API uses the standardized error handling approach defined in the [Common API Details](/developer-resources/api/common-api-details#error-handling). In addition to the common error codes, the Identity API uses the following domain-specific error codes:
+
+| Error Code                            | HTTP Status | Description                                     |
+|---------------------------------------|-------------|--------------------------------------------------|
+| `ERROR_KEY_NOT_FOUND`                 | 404         | The requested key could not be found              |
+| `ERROR_KEY_INVALID_FORMAT`            | 400         | The key format is invalid                         |
+| `ERROR_KEY_INVALID_TYPE`              | 400         | The key type is not supported                     |
+| `ERROR_KEY_PERMISSION_DENIED`         | 403         | The agent does not have permission to use this key |
+| `ERROR_KEY_ROTATION_FAILED`           | 500         | The key rotation operation failed                 |
+| `ERROR_SIGNATURE_INVALID`             | 400         | The signature is invalid                          |
+| `ERROR_SIGNATURE_CREATION_FAILED`     | 500         | Failed to create signature                        |
+| `ERROR_SIGNATURE_VERIFICATION_FAILED` | 400         | The signature verification failed                 |
+| `ERROR_OBJECT_SERIALIZATION_FAILED`   | 400         | Failed to serialize object for signing           |
+
+### Example Error Response
+
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "ERROR_SIGNATURE_VERIFICATION_FAILED",
+    "message": "Signature verification failed",
+    "details": {
+      "reason": "The signature does not match the provided public key",
+      "suggestion": "Ensure you're using the correct key for verification"
+    }
+  },
+  "requestId": "req-123456789"
+}
+```
+
+For more information on error handling, including all common error codes and best practices, see the [Error Handling](/developer-resources/api/common-api-details#error-handling) section of the Common API Details.

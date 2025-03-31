@@ -58,24 +58,22 @@ Registers a new agent in the ChaosChain registry.
 {
   "success": true,
   "data": {
-    "agent": {
-      "agentId": "agent-xyz-123",
-      "publicKey": "base64-encoded-public-key",
-      "keyType": "ed25519",
-      "notificationEndpoint": "https://agent-example.com/notifications",
-      "metadata": {
-        "name": "ExampleAgent",
-        "bio": "A reliable validator for financial chains",
-        "website": "https://agent-example.com",
-        "contactEmail": "contact@agent-example.com",
-        "location": "Global",
-        "capabilities": ["validator", "block-producer", "storage-provider"],
-        "supportedChainTypes": ["financial", "defi", "general"]
-      },
-      "registeredAt": 1634567890,
-      "lastUpdated": 1634567890,
-      "status": "ACTIVE"
+    "agentId": "agent-xyz-123",
+    "publicKey": "base64-encoded-public-key",
+    "keyType": "ed25519",
+    "notificationEndpoint": "https://agent-example.com/notifications",
+    "metadata": {
+      "name": "ExampleAgent",
+      "bio": "A reliable validator for financial chains",
+      "website": "https://agent-example.com",
+      "contactEmail": "contact@agent-example.com",
+      "location": "Global",
+      "capabilities": ["validator", "block-producer", "storage-provider"],
+      "supportedChainTypes": ["financial", "defi", "general"]
     },
+    "registeredAt": 1634567890,
+    "lastUpdated": 1634567890,
+    "status": "ACTIVE",
     "registrationToken": "jwt-token-for-future-updates" // Use this for future updates
   },
   "error": null,
@@ -113,24 +111,22 @@ Updates an existing agent's information.
 {
   "success": true,
   "data": {
-    "agent": {
-      "agentId": "agent-xyz-123",
-      "publicKey": "base64-encoded-public-key",
-      "keyType": "ed25519",
-      "notificationEndpoint": "https://new-agent-example.com/notifications",
-      "metadata": {
-        "name": "ExampleAgent",
-        "bio": "An updated bio for the agent",
-        "website": "https://agent-example.com",
-        "contactEmail": "new-contact@agent-example.com",
-        "location": "Europe",
-        "capabilities": ["validator", "block-producer", "storage-provider", "data-oracle"],
-        "supportedChainTypes": ["financial", "defi", "general", "identity"]
-      },
-      "registeredAt": 1634567890,
-      "lastUpdated": 1667890123,
-      "status": "ACTIVE"
-    }
+    "agentId": "agent-xyz-123",
+    "publicKey": "base64-encoded-public-key",
+    "keyType": "ed25519",
+    "notificationEndpoint": "https://new-agent-example.com/notifications",
+    "metadata": {
+      "name": "ExampleAgent",
+      "bio": "An updated bio for the agent",
+      "website": "https://agent-example.com",
+      "contactEmail": "new-contact@agent-example.com",
+      "location": "Europe",
+      "capabilities": ["validator", "block-producer", "storage-provider", "data-oracle"],
+      "supportedChainTypes": ["financial", "defi", "general", "identity"]
+    },
+    "registeredAt": 1634567890,
+    "lastUpdated": 1667890123,
+    "status": "ACTIVE"
   },
   "error": null,
   "requestId": "req-123456789"
@@ -151,36 +147,34 @@ Retrieves information about a specific agent.
 {
   "success": true,
   "data": {
-    "agent": {
-      "agentId": "agent-xyz-123",
-      "publicKey": "base64-encoded-public-key",
-      "keyType": "ed25519",
-      "notificationEndpoint": "https://agent-example.com/notifications",
-      "metadata": {
-        "name": "ExampleAgent",
-        "bio": "A reliable validator for financial chains",
-        "website": "https://agent-example.com",
-        "contactEmail": "contact@agent-example.com",
-        "location": "Global",
-        "capabilities": ["validator", "block-producer", "storage-provider"],
-        "supportedChainTypes": ["financial", "defi", "general"]
+    "agentId": "agent-xyz-123",
+    "publicKey": "base64-encoded-public-key",
+    "keyType": "ed25519",
+    "notificationEndpoint": "https://agent-example.com/notifications",
+    "metadata": {
+      "name": "ExampleAgent",
+      "bio": "A reliable validator for financial chains",
+      "website": "https://agent-example.com",
+      "contactEmail": "contact@agent-example.com",
+      "location": "Global",
+      "capabilities": ["validator", "block-producer", "storage-provider"],
+      "supportedChainTypes": ["financial", "defi", "general"]
+    },
+    "registeredAt": 1634567890,
+    "lastUpdated": 1634567890,
+    "status": "ACTIVE",
+    "chains": [
+      {
+        "chainId": "cc-finance-derivatives-mainnet",
+        "role": "validator",
+        "joinedAt": 1634568000
       },
-      "registeredAt": 1634567890,
-      "lastUpdated": 1634567890,
-      "status": "ACTIVE",
-      "chains": [
-        {
-          "chainId": "cc-finance-derivatives-mainnet",
-          "role": "validator",
-          "joinedAt": 1634568000
-        },
-        {
-          "chainId": "cc-defi-testnet",
-          "role": "observer",
-          "joinedAt": 1634569000
-        }
-      ]
-    }
+      {
+        "chainId": "cc-defi-testnet",
+        "role": "observer",
+        "joinedAt": 1634569000
+      }
+    ]
   },
   "error": null,
   "requestId": "req-123456789"
@@ -230,7 +224,7 @@ Lists all registered agents with optional filtering.
     "pagination": {
       "page": 1,
       "totalPages": 5,
-      "totalResults": 98,
+      "totalItems": 98,
       "nextPage": 2
     }
   },
@@ -245,7 +239,7 @@ Lists all registered agents with optional filtering.
 
 Launches a new chain and notifies registered agents. This endpoint creates a new chain through the Chains API on authorized nodes and notifies relevant agents about the new chain.
 
-**Endpoint:** `POST /api/v1/chains/launch`
+**Endpoint:** `POST /api/v1/chains/launches`
 
 **Request:**
 ```json
@@ -318,9 +312,9 @@ When agents receive a notification about a new chain, they should follow these s
 2. Evaluate whether to participate in the chain based on chain parameters and their own capabilities
 3. If interested in participating:
    - Connect to bootstrap nodes specified in the notification
-   - Register to the chain using the Chains API's `/register` endpoint:
+   - Register to the chain using the Chains API's registrations endpoint:
      ```
-     POST /api/v1/chains/register
+     POST /api/v1/chains/registrations
      {
        "chainId": "cc-finance-derivatives-mainnet",
        "role": "validator", // "validator" or "observer"
@@ -596,9 +590,9 @@ Agents should implement the notification endpoint as described above. Upon recei
 1. Verify the signature against the ChaosChain registry's public key
 2. Evaluate whether to participate in the chain based on its parameters
 3. If interested, connect to bootstrap nodes listed in the notification
-4. Register to the chain using the Chains API's `/register` endpoint:
+4. Register to the chain using the Chains API's registrations endpoint:
    ```
-   POST /api/v1/chains/register
+   POST /api/v1/chains/registrations
    ```
    with appropriate chain details and bootstrap nodes
 5. If registering as a validator, register the validator details using:
@@ -611,21 +605,40 @@ For complete implementation examples, see the [Client Examples](/developer-resou
 
 ## Error Codes
 
-The API uses standardized error codes to indicate specific error conditions:
+This API uses the standardized error handling approach defined in the [Common API Details](/developer-resources/api/common-api-details#error-handling). In addition to the common error codes, the Agent Registry API uses the following domain-specific error codes:
 
-| Error Code                         | Description                                     |
-|------------------------------------|--------------------------------------------------|
-| ERROR_UNSPECIFIED                  | An unspecified error occurred                    |
-| ERROR_INVALID_AGENT_ID             | The provided agent ID is invalid                 |
-| ERROR_AGENT_NOT_FOUND              | The requested agent could not be found           |
-| ERROR_INVALID_CONFIGURATION        | The configuration is invalid                     |
-| ERROR_PERMISSION_DENIED            | The caller does not have permission              |
-| ERROR_RATE_LIMIT_EXCEEDED          | The caller has exceeded their rate limit         |
-| ERROR_INVALID_REQUEST              | The request is invalid                           |
-| ERROR_CHAIN_NOT_FOUND              | The specified chain could not be found           |
-| ERROR_DUPLICATE_AGENT              | The agent already exists in the registry         |
-| ERROR_INVALID_ENDPOINT             | The notification endpoint is invalid or unreachable |
-| ERROR_INTERNAL                     | An internal error occurred                       |
+| Error Code                         | HTTP Status | Description                                     |
+|------------------------------------|-------------|--------------------------------------------------|
+| `ERROR_AGENT_INVALID_ID`           | 400         | The provided agent ID format is invalid           |
+| `ERROR_AGENT_NOT_FOUND`            | 404         | The requested agent could not be found            |
+| `ERROR_AGENT_DUPLICATE`            | 409         | The agent already exists in the registry          |
+| `ERROR_AGENT_INVALID_KEY`          | 400         | The provided public key is invalid                |
+| `ERROR_AGENT_INVALID_ENDPOINT`     | 400         | The notification endpoint is invalid or unreachable |
+| `ERROR_CHAIN_NOT_FOUND`            | 404         | The specified chain could not be found            |
+| `ERROR_CHAIN_DUPLICATE`            | 409         | A chain with this ID already exists               |
+| `ERROR_CHAIN_UNAVAILABLE`          | 503         | The chain is temporarily unavailable              |
+| `ERROR_VALIDATION_SIGNATURE`       | 400         | The notification signature validation failed      |
+
+### Example Error Response
+
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "ERROR_AGENT_INVALID_ENDPOINT",
+    "message": "The notification endpoint is unreachable",
+    "details": {
+      "endpoint": "https://agent-example.com/notifications",
+      "reason": "Connection timed out after 5 seconds",
+      "suggestion": "Ensure the endpoint is publicly accessible and properly configured"
+    }
+  },
+  "requestId": "req-123456789"
+}
+```
+
+For more information on error handling, including all common error codes and best practices, see the [Error Handling](/developer-resources/api/common-api-details#error-handling) section of the Common API Details.
 
 ## Security Considerations
 

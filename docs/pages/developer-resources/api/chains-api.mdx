@@ -174,16 +174,12 @@ Registers the local node to an existing chain, allowing it to participate in the
 {
   "success": true,
   "data": {
-    "chain": {
-      "humanReadableId": "cc-finance-derivatives-mainnet",
-      "evmChainId": 6660001,
-      "genesisHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
-      "status": "REGISTERED"
-    },
-    "registration": {
-      "registeredAs": "VALIDATOR",
-      "timestamp": 1634567890
-    },
+    "humanReadableId": "cc-finance-derivatives-mainnet",
+    "evmChainId": 6660001,
+    "genesisHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
+    "status": "REGISTERED",
+    "registeredAs": "VALIDATOR",
+    "registrationTimestamp": 1634567890,
     "bootstrapStatus": {
       "connected": true,
       "peersConnected": 3,
@@ -209,22 +205,16 @@ Retrieves detailed information about a specific chain.
 {
   "success": true,
   "data": {
-    "identifiers": {
-      "humanReadableId": "cc-finance-derivatives-mainnet",
-      "evmChainId": 6660001,
-      "genesisHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc"
-    },
+    "humanReadableId": "cc-finance-derivatives-mainnet",
+    "evmChainId": 6660001,
+    "genesisHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
     "status": "ACTIVE",
-    "registration": {
-      "txHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-      "blockNumber": 14500000,
-      "timestamp": 1634567890
-    },
-    "statistics": {
-      "blocksProduced": 150289,
-      "uptimePercentage": 99.98,
-      "lastBlockTime": 1667890123
-    },
+    "txHash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+    "blockNumber": 14500000,
+    "registrationTimestamp": 1634567890,
+    "blocksProduced": 150289,
+    "uptimePercentage": 99.98,
+    "lastBlockTime": 1667890123,
     "bootstrapNodes": [
       {
         "endpoint": "https://bootstrap1.chaoschain.org/cc-finance-derivatives-mainnet",
@@ -235,9 +225,7 @@ Retrieves detailed information about a specific chain.
         "publicKey": "base64-encoded-public-key"
       }
     ],
-    "agentEndpoint": {
-      "subscriptionUrl": "ws://localhost:8443/chains/cc-finance-derivatives-mainnet/subscribe"
-    }
+    "subscriptionUrl": "ws://localhost:8443/api/v1/chains/cc-finance-derivatives-mainnet/subscribe"
   },
   "error": null,
   "requestId": "req-123456789"
@@ -330,6 +318,7 @@ Lists all validators for a specific chain.
     "pagination": {
       "page": 1,
       "totalPages": 1,
+      "totalItems": 2,
       "nextPage": null
     }
   },
@@ -515,21 +504,42 @@ Retrieves wallet integration information for a specific chain.
 
 ## Error Codes
 
-The API uses standardized error codes to indicate specific error conditions:
+This API uses the standardized error handling approach defined in the [Common API Details](/developer-resources/api/common-api-details#error-handling). In addition to the common error codes, the Chains API uses the following domain-specific error codes:
 
-| Error Code                         | Description                                     |
-|------------------------------------|--------------------------------------------------|
-| ERROR_UNSPECIFIED                  | An unspecified error occurred                    |
-| ERROR_INVALID_CHAIN_ID             | The provided chain ID is invalid                 |
-| ERROR_CHAIN_NOT_FOUND              | The requested chain could not be found           |
-| ERROR_INVALID_CONFIGURATION        | The configuration is invalid                     |
-| ERROR_PERMISSION_DENIED            | The caller does not have permission              |
-| ERROR_RATE_LIMIT_EXCEEDED          | The caller has exceeded their rate limit         |
-| ERROR_INVALID_REQUEST              | The request is invalid                           |
-| ERROR_VALIDATOR_NOT_FOUND          | The specified validator could not be found       |
-| ERROR_DUPLICATE_VALIDATOR          | The validator already exists in the set          |
-| ERROR_INSUFFICIENT_VOTING_POWER    | The voting power allocation is invalid           |
-| ERROR_INTERNAL                     | An internal error occurred                       |
+| Error Code                            | HTTP Status | Description                                     |
+|---------------------------------------|-------------|--------------------------------------------------|
+| `ERROR_CHAIN_INVALID_ID`              | 400         | The provided chain ID format is invalid           |
+| `ERROR_CHAIN_NOT_FOUND`               | 404         | The requested chain could not be found            |
+| `ERROR_CHAIN_DUPLICATE`               | 409         | A chain with this ID already exists               |
+| `ERROR_CHAIN_INVALID_CONFIG`          | 400         | The chain configuration is invalid                |
+| `ERROR_CHAIN_INACTIVE`                | 400         | The chain is not active                           |
+| `ERROR_VALIDATOR_NOT_FOUND`           | 404         | The specified validator could not be found        |
+| `ERROR_VALIDATOR_DUPLICATE`           | 409         | The validator already exists in the set           |
+| `ERROR_VALIDATOR_INVALID_KEY`         | 400         | The validator public key is invalid               |
+| `ERROR_VALIDATOR_VOTING_POWER`        | 400         | The voting power allocation is invalid            |
+| `ERROR_CONSENSUS_SIGNATURE_INVALID`   | 400         | The block or vote signature is invalid            |
+| `ERROR_CONSENSUS_DEADLINE_EXCEEDED`   | 400         | The operation deadline has been exceeded          |
+
+### Example Error Response
+
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "ERROR_VALIDATOR_VOTING_POWER",
+    "message": "Validator voting power exceeds allowed maximum",
+    "details": {
+      "requestedPower": 60,
+      "maximumAllowed": 33,
+      "suggestion": "Reduce the voting power to 33% or less of the total"
+    }
+  },
+  "requestId": "req-123456789"
+}
+```
+
+For more information on error handling, including all common error codes and best practices, see the [Error Handling](/developer-resources/api/common-api-details#error-handling) section of the Common API Details.
 
 ## Related Documentation
 

@@ -58,7 +58,7 @@ Establishes a subscription for an agent to receive push notifications for a spec
     "subscriptionId": "sub-123456", // Unique subscription identifier
     "subscriptionToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", // Authentication token for WebSocket connection
     "expiresAt": 1699426123, // Timestamp when subscription expires
-    "wsEndpoint": "ws://localhost:8443/chains/cc-finance-derivatives-mainnet/subscribe" // WebSocket endpoint for real-time notifications
+    "wsEndpoint": "ws://localhost:8443/api/v1/chains/cc-finance-derivatives-mainnet/subscribe" // WebSocket endpoint for real-time notifications
   },
   "error": null,
   "requestId": "req-123456789"
@@ -156,16 +156,12 @@ Retrieves block data for validation.
 {
   "success": true,
   "data": {
-    "header": {
-      "height": 150290,
-      "parentHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
-      "timestamp": 1667890123,
-      "proposer": "0x456def..."
-    },
-    "body": {
-      "data": "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d", // Arbitrary data encoded as hex
-      "dataSize": 1024 // Size in bytes
-    },
+    "height": 150290,
+    "parentHash": "0x7a9c0e74cb7f038a1f2e7c60721a2a2a53a26c99739bea265d9b3fbaac06fcdc",
+    "timestamp": 1667890123,
+    "proposer": "0x456def...",
+    "data": "0x7b2274797065223a22626c6f636b222c2264617461223a5b2e2e2e5d7d", // Arbitrary data encoded as hex
+    "dataSize": 1024, // Size in bytes
     "signatures": {
       "0x123abc...": "0xsignature1...",
       "0x456def...": "0xsignature2..."
@@ -571,7 +567,7 @@ async function subscribeToChain() {
 // WebSocket connection for real-time notifications
 function connectToWebSocket(chainId, token) {
   // Connect to the local WebSocket endpoint
-  const ws = new WebSocket(`ws://localhost:8443/chains/${chainId}/subscribe?token=${token}`);
+  const ws = new WebSocket(`ws://localhost:8443/api/v1/chains/${chainId}/subscribe?token=${token}`);
   
   ws.on('open', () => {
     console.log('WebSocket connection established');

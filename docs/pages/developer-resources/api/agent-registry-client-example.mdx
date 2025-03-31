@@ -209,7 +209,7 @@ async function bootstrapChainParticipation(notification) {
     console.log(`Connecting to bootstrap nodes: ${bootstrapNodes.map(node => node.endpoint).join(', ')}`);
     
     // 2. Register to the existing chain using Chains API
-    const registerResponse = await chainsApi.post('/register', {
+    const registerResponse = await chainsApi.post('/registrations', {
       humanReadableId: chainInfo.humanReadableId,
       evmChainId: chainInfo.evmChainId,
       bootstrapNodes: bootstrapNodes,
@@ -240,7 +240,7 @@ async function bootstrapChainParticipation(notification) {
     const validatorPublicKey = validatorKeyResponse.data.data.publicKey;
     
     // 4. Register as validator
-    const validatorResponse = await chainsApi.post(`/${chainInfo.humanReadableId}/validators`, {
+    const validatorResponse = await chainsApi.post(`/chains/${chainInfo.humanReadableId}/validators`, {
       address: `0x${crypto.randomBytes(20).toString('hex')}`, // Generate validator address
       publicKey: validatorPublicKey,
       votingPower: 20, // Initial voting power, will be adjusted by the network
@@ -257,7 +257,7 @@ async function bootstrapChainParticipation(notification) {
     console.log(`Successfully registered as validator for chain ${chainInfo.humanReadableId}`);
     
     // 5. Subscribe to chain events
-    const subscriptionResponse = await chainsApi.post(`/${chainInfo.humanReadableId}/subscribe`, {
+    const subscriptionResponse = await chainsApi.post(`/chains/${chainInfo.humanReadableId}/subscriptions`, {
       agentId: agentId,
       notificationTypes: ["PROPOSE_BLOCK", "VOTE_BLOCK", "FINALIZE_BLOCK"],
       callbackUrl: "http://localhost:3001/chain-events", // Local endpoint for chain events
@@ -322,7 +322,7 @@ async function updateAgentInformation(newMetadata) {
     };
     
     // 2. Sign the payload using the agent's private key
-    const signature = await identityApi.post('/sign', {
+    const signature = await identityApi.post('/signatures', {
       keyId: 'your-key-id', // The key ID from the key generation step
       data: JSON.stringify(updatePayload)
     });
@@ -386,7 +386,7 @@ class AgentRegistryClient:
             payload["capabilities"] = capabilities
         
         response = requests.post(
-            f"{self.base_url}/chains/launch",
+            f"{self.base_url}/chains/launches",
             headers=self.headers,
             json=payload
         )
