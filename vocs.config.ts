@@ -102,6 +102,7 @@ export default defineConfig({
         },
         { text: 'Compute Wars Thesis', link: '/academic-research/compute-wars' },
         { text: 'Agent Trust & Verification', link: '/academic-research/agent-trust' },
+        { text: 'Repeated Trust Games', link: '/academic-research/repeated-trust-games' },
         { text: 'Security Research', link: '/academic-research/security' },
         { text: 'Societal Implications', link: '/academic-research/societal' },
         { text: 'Technical Research', link: '/academic-research/technical' },
