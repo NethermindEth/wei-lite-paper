@@ -67,6 +67,13 @@ export default defineConfig({
             { text: 'Identity Module', link: '/technical-architecture/node-modifications/identity-module' },
             { text: 'Mempool Flexibility', link: '/technical-architecture/node-modifications/mempool-flexibility' },
           ]
+        },
+        {
+          text: 'Agent Coordination',
+          items: [
+            { text: 'Fund Distribution Protocol', link: '/technical-architecture/agent-coordination/fund-distribution' },
+            { text: 'Multi-Agent Consensus', link: '/technical-architecture/agent-coordination/consensus' }
+          ]
         }
       ]
     },
