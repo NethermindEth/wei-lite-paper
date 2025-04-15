@@ -35,8 +35,7 @@ export default defineConfig({
     {
       text: 'Introduction',
       items: [
-        { text: 'Overview', link: '/introduction/' },
-        { text: 'Vision and Mission', link: '/introduction/vision' },
+        { text: 'Vision and Mission', link: '/introduction/' },
         { text: 'Compute Governance Thesis', link: '/introduction/compute-thesis' },
         { text: 'Self-Evolving Chain', link: '/introduction/self-evolving-chain' },
       ]
