@@ -32,111 +32,37 @@ export default defineConfig({
   ],
   
   sidebar: [
-    {
-      text: 'Introduction',
-      items: [
-        { text: 'Vision and Mission', link: '/introduction/' },
-        { text: 'Compute Governance Thesis', link: '/introduction/compute-thesis' },
-        { text: 'Self-Evolving Chain', link: '/introduction/self-evolving-chain' },
-      ]
-    },
-    {
-      text: 'First ChaosChains',
-      link: '/chain-management/first-chaoschains'
-    },
-    {
-      text: 'Technical Architecture',
-      items: [
-        { text: 'Overview', link: '/technical-architecture/' },
-        { text: 'Node Architecture', link: '/technical-architecture/node' },
-        { text: 'Chain Identity System', link: '/technical-architecture/chain-identity' },
-        { 
-          text: 'L1 Integration',
-          items: [
-            { text: 'Overview', link: '/technical-architecture/l1-integration/' },
-            { text: 'Chain Registry Contract', link: '/technical-architecture/l1-integration/chain-registry' },
-            { text: 'Bridge Contract', link: '/technical-architecture/l1-integration/bridge-contract' }
-          ]
-        },
-        { 
-          text: 'Node Modifications',
-          items: [
-            { text: 'Block Proposal and Voting', link: '/technical-architecture/node-modifications/block-proposal' },
-            { text: 'Horizontal Scalability', link: '/technical-architecture/node-modifications/horizontal-scalability' },
-            { text: 'Identity Module', link: '/technical-architecture/node-modifications/identity-module' },
-            { text: 'Mempool Flexibility', link: '/technical-architecture/node-modifications/mempool-flexibility' },
-          ]
-        },
-        {
-          text: 'Agent Coordination',
-          items: [
-            { text: 'Fund Distribution Protocol', link: '/technical-architecture/agent-coordination/fund-distribution' },
-            { text: 'Multi-Agent Consensus', link: '/technical-architecture/agent-coordination/consensus' }
-          ]
-        }
-      ]
-    },
-    {
-      text: 'Chain Management',
-      items: [
-        { text: 'Overview', link: '/chain-management/' },
-        { text: 'Minimal Bootstrap Requirements', link: '/chain-management/bootstrap-requirements' },
-        { text: 'Chain Creation', link: '/chain-management/creation' },
-      ]
-    },
-    {
-      text: 'Agent Ecosystem',
-      items: [
-        { text: 'Overview', link: '/agent-ecosystem/' },
-        { text: 'Agent Registry', link: '/agent-ecosystem/registry' },
-        { text: 'Agent Development', link: '/agent-ecosystem/development' },
-      ]
-    },
-    {
-      text: 'Academic Research',
-      items: [
-        { text: 'Overview', link: '/academic-research/' },
-        {
-          text: 'Governance Revolution',
-          items: [
-            { text: 'Overview', link: '/governance-revolution/' },
-            { text: 'Current Problems', link: '/governance-revolution/current-problems' },
-            { text: 'Agentic Governance', link: '/governance-revolution/agentic-governance' },
-            { text: 'Governance as Compute', link: '/academic-research/compute-wars' },
-            { text: 'Proof of Humanity', link: '/governance-revolution/proof-of-humanity' },
-          ]
-        },
-        { text: 'Compute Wars Thesis', link: '/academic-research/compute-wars' },
-        { text: 'Agent Trust & Verification', link: '/academic-research/agent-trust' },
-        { text: 'Repeated Trust Games', link: '/academic-research/repeated-trust-games' },
-        { text: 'Security Research', link: '/academic-research/security' },
-        { text: 'Societal Implications', link: '/academic-research/societal' },
-        { text: 'Technical Research', link: '/academic-research/technical' },
-      ]
-    },
-    {
-      text: 'Roadmap',
-      link: '/roadmap/'
-    },
-    {
-      text: 'Developer Resources',
-      items: [
-        { text: 'Overview', link: '/developer-resources/' },
-        { text: 'Agent Development', link: '/agent-ecosystem/development' },
-        { text: 'Chain Creation', link: '/chain-management/creation' },
-        { 
-          text: 'API Reference', 
-          items: [
-            { text: 'Common API Details', link: '/developer-resources/api/common-api-details' },
-            { text: 'Agent Registry API', link: '/developer-resources/api/agent-registry-api' },
-            { text: 'Identity API', link: '/developer-resources/api/identity-api' },
-            { text: 'Chains API', link: '/developer-resources/api/chains-api' },
-            { text: 'Agent Consensus API', link: '/developer-resources/api/agent-consensus-api' }
-          ]
-        }
-      ]
-    }
-  ],
+      {
+        text: 'Lite Paper',
+        items: [
+          {
+            text: 'Vision and Mission',
+            link: '/vision'
+          },
+          {
+            text: 'Approach',
+            items: [
+              {
+                text: 'Ethereum Agentic Core Development',
+                link: '/approach/ethereum-core-dev'
+              },
+              {
+                text: 'Customizable L2s Launchpad',
+                link: '/approach/l2-launchpad'
+              },
+              {
+                text: 'Core Dev DAO Support',
+                link: '/approach/dao-support'
+              }
+            ]
+          },
+          {
+            text: 'Research Questions',
+            link: '/research'
+          }
+        ]
+      }
+    ],
   
   theme: {
     accentColor: '#7C3AED',
