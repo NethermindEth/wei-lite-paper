@@ -1,10 +1,10 @@
-# ChaosChain
+# Wei
 
-The future of governance is a computational arms race. ChaosChain builds the infrastructure, agents, and ecosystem that will define the rules of this new game.
+The future of governance is a computational arms race. Wei builds the infrastructure, agents, and ecosystem that will define the rules of this new game.
 
 ## Overview
 
-ChaosChain is a pioneering project exploring the intersection of blockchain governance, AI agents, and computational competition. The core thesis posits that governance is evolving into a competition determined primarily by computational resources, where AI agents with sufficient compute power will increasingly shape the future of blockchain systems and other coordination mechanisms.
+Wei is a pioneering project exploring the intersection of blockchain governance, AI agents, and computational competition. The core thesis posits that governance is evolving into a competition determined primarily by computational resources, where AI agents with sufficient compute power will increasingly shape the future of blockchain systems and other coordination mechanisms.
 
 ### Core Concepts
 
@@ -14,7 +14,7 @@ ChaosChain is a pioneering project exploring the intersection of blockchain gove
 
 ## Project Structure
 
-This repository contains the documentation for the ChaosChain project, built using [Vocs](https://vocs.dev).
+This repository contains the documentation for the Wei project, built using [Vocs](https://vocs.dev).
 
 ### Key Components
 
@@ -68,8 +68,6 @@ npm run preview
 
 ## Community & Resources
 
-- [Documentation](https://chaoschain.ai)
-- [GitHub](https://github.com/chaoschain)
 - [Telegram](https://t.me/thechaoschain)
 
 ## Contributing

@@ -1,7 +1,7 @@
 import { defineConfig } from 'vocs'
 
 export default defineConfig({
-  title: 'ChaosChain',
+  title: 'Wei',
   description: 'The future of governance is a computational arms race',
   
   rootDir: './docs',
@@ -17,7 +17,7 @@ export default defineConfig({
     }
   },
   
-  logoUrl: '/chaoschain-logo.png',
+  logoUrl: '/wei-logo.png',
   iconUrl: '/favicon.ico',
   
   socials: [
