@@ -29,8 +29,8 @@ To set up the development environment:
 
 ```bash
 # Clone the repository
-git clone https://github.com/chaoschain/chaoschain-lite-paper.git
-cd chaoschain-lite-paper
+git clone https://github.com/nethermindeth/wei-lite-paper.git
+cd wei-lite-paper
 
 # Install dependencies
 npm install
@@ -68,7 +68,7 @@ npm run preview
 
 ## Community & Resources
 
-- [Telegram](https://t.me/thechaoschain)
+- [Telegram](https://t.me/agentwei)
 
 ## Contributing
 

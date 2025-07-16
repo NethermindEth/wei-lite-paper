@@ -23,11 +23,11 @@ export default defineConfig({
   socials: [
     {
       icon: 'github',
-      link: 'https://github.com/chaoschain'
+      link: 'https://github.com/nethermindeth/wei-lite-paper'
     },
     {
       icon: 'telegram',
-      link: 'https://t.me/thechaoschain'
+      link: 'https://t.me/agentwei'
     }
   ],
   
