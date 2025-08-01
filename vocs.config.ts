@@ -23,6 +23,10 @@ export default defineConfig({
   socials: [
     {
       icon: 'github',
+      link: 'https://github.com/nethermindeth/wei'
+    },
+    {
+      icon: 'github',
       link: 'https://github.com/nethermindeth/wei-lite-paper'
     },
     {
